@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Project id = "1" load="NONE" name="Jmeno" language="CS" fontSize ="1" >
+	<RegsitredLanguage value="CS"/>
+
+	<Window id="123546" load="NONE" name="blablabla">
+		<Panel id = "13453">
+			<Table id = "1" name="Meter" columns="3">
+				<Row id = "1">
+					<Item id="1" dataType="STRING" meter="none" adresa="(UINT16)" dataLeng="v bitech" value="asdasdasd"/>
+					<Item id="1" dataType="STRING" meter="none" value = "aasdasd"/>
+					<Item id="1" dataType="STRING" meter="none" value = "aasdasd"/>
+					
+				</Row>
+				<Row id = "1">
+					<Item id="1" dataType="STRING" meter="none" value="asdasdasd"/>
+					<Item id="1" dataType="STRING" meter="none" value = "aasdasd"/>
+					<Item id="1" dataType="STRING" meter="none" value = "aasdasd"/>
+					
+				</Row>
+				<Row id = "1">
+					<Item id="1" dataType="STRING" meter="none" value = "asdasdasd"/>
+					<Item id="1" dataType="STRING" meter="none" value = "aasdasd"/>
+					<Item id="1" dataType="STRING" meter="none" value = "aasdasd"/>
+					
+				</Row>
+			</Table>
+		</Panel>
+	</Window>
+</Project>
+
+///vyctovy XML
+58 -> vyctovy typ rika ktery jazyk umi to zarizeni
+Druh vyctovyho typu
+XML s vyctovymi typy se nebudou predavat ale data bude obsahovat to hlavni
