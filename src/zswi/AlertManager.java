@@ -3,6 +3,7 @@ package zswi;
 
 import java.time.LocalTime;
 import java.util.Optional;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
@@ -22,14 +23,14 @@ public class AlertManager {
     public static Project Project() {
         GridPane gridPane = new GridPane();
         TextField name;
-        TextField language;
         int position = 0;
         Label messageLabel = new Label();
         gridPane.add(new Label("Název projektu: "), 0, position);
         gridPane.add(name = new TextField(), 1, position++);
-
+        
+        ChoiceBox<LanguageManager.Language> box = new ChoiceBox(FXCollections.observableArrayList(LanguageManager.getListLanguages()));
         gridPane.add(new Label("Jazyk: "), 0, position);
-        gridPane.add(language = new TextField(), 1, position++);
+        gridPane.add(box, 1, position++);
         
         gridPane.add(messageLabel, 0, 4, 2, 1);
         Alert alert = Main.getAlert(Alert.AlertType.CONFIRMATION, "Založit projekt", "", "", gridPane);
@@ -37,7 +38,6 @@ public class AlertManager {
         boolean bool = false;
         String nameData = "";
         int fontData = 0;
-        String langData = "";
 
         while (!bool) {
             bool = true;
@@ -45,25 +45,24 @@ public class AlertManager {
             if (bt.get() == ButtonType.OK) {
                 /////////////////////////////////////////////////////////////////////////////////////////////////
                 nameData = name.getText().trim();
-                langData = language.getText().trim();
                 if (nameData.isEmpty()) {
                     ViewProject.SetErrorHandler(name, messageLabel, "Název projektu je příliš krátký");
                     bool = false;
                 } else {
                     ViewProject.SetUnErrorHandler(name, messageLabel);
                 }
-                if (langData.isEmpty()) {
-                    ViewProject.SetErrorHandler(language, messageLabel, "Název jazyka je příliš krátký");
+                if (box.getValue()==null) {
+                    ViewProject.SetErrorHandler(box, messageLabel, "Nevybral jsi jazyk");
                     bool = false;
                 } else {
-                    ViewProject.SetUnErrorHandler(language, messageLabel);
+                    ViewProject.SetUnErrorHandler(box, messageLabel);
                 }
                 /////////////////////////////////////////////////////////////////////////////////////////////////
             } else {
                 return null;
             }
         }
-        return new Project(langData, nameData, null, null);
+        return new Project(box.getValue().getId(), nameData, null, null);
     }
 
     public static Window Window(Window parrent) {
@@ -230,42 +229,5 @@ public class AlertManager {
             vh[i]=i;
         }
         return vh;
-    }
-    public static void editPanel(Panel panel){
-        BorderPane pane = new BorderPane();
-        GridPane gridPane = new GridPane();
-        int position = 0;
-        //přidate tabulku
-        //odebrat tabulku
-        Value[] values = {new Value(0,"Přidat tabulku"), new Value(1,"Odebrat tabulku")};
-        ChoiceBox<Value> select= new ChoiceBox(FXCollections.observableArrayList(values));
-        
-        gridPane.add(new Label("Hodiny: "), 0, position);
-        gridPane.add(select, 1, position++);
-        gridPane.add(pane, 0, position);
-        gridPane.add(select, 1, position++);
-    }
-    private static class Value{
-        private final int index;
-        private final String text;
-
-        public Value(int index, String text) {
-            this.index = index;
-            this.text = text;
-        }
-        
-        public int getIndex() {
-            return index;
-        }
-
-        public String getText() {
-            return text;
-        }
-        
-        @Override
-        public String toString() {
-            return text;
-        }
-        
     }
 }
