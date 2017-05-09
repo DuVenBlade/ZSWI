@@ -25,10 +25,9 @@ public class Table extends AFlowable {
         init(name, listRow);
     }
     private void init(String name, List<Item> listRow){
-        super.setName(name);
         this.listItems = listRow==null?new ArrayList<>():listRow;
         vTable = new ViewTable(this);
-        vTable.notificate();
+        setName(name);
     }
     public void createItem(){
         Item item  =AlertManager.Item();

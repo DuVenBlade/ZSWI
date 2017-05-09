@@ -17,16 +17,15 @@ public class Window extends AFlowable {
     }
 
     public Window(String name, Window parrent,List<Window> windows, Panel panel) {
-        super();
         init(name,parrent, windows, panel);
         
     }
     private void init(String name, Window parrent,List<Window> windows, Panel panel){
-        super.setName(name);
         this.listWindows = windows==null?new ArrayList<>():windows;
-        this.panel = panel;
         vWindow = new ViewWindow(this);
+        this.panel = panel;
         this.parrent = parrent;
+        setName(name);
     }
     public void createWindow(){
         Window wind = AlertManager.Window(this);
