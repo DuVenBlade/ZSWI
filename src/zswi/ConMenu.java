@@ -5,6 +5,7 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 
 /**
@@ -20,7 +21,11 @@ public class ConMenu {
     }
 
     private static Menu getFileMenu() {
+        ImageView imageView = new ImageView(ProjectManager.menu);
+        imageView.setFitHeight(15);
+        imageView.setFitWidth(15);
         Menu fileMenu = new Menu("_Soubor");
+        fileMenu.setGraphic(imageView);
         MenuItem newItem = new MenuItem("_Nový");
         MenuItem openItem = new MenuItem("_Otevřít");
         MenuItem saveItem = new MenuItem("_Uložit");

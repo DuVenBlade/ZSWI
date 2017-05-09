@@ -130,9 +130,28 @@ public class ItemManager {
         }
 
     }
+    private void setBOOLEAN(String string, Item<Boolean> item) {
+        boolean BOOLEAN = false;
+        try {
+        	BOOLEAN = Boolean.valueOf(string);
+        } catch (Exception e) {
+            item.correction(false, "Špatný formát booleanu");
+        }
+        item.setData(BOOLEAN);
+    }
+    
+    private void setBIT(String string, Item<Byte> item) {
+        byte BIT = 0;
+        try {
+        	BIT = Byte.valueOf(string);
+        } catch (Exception e) {
+            item.correction(false, "Špatný formát bitu");
+        }
+        item.setData(BIT);
+    }
 
     public enum DataType {
-        STRING, INT, DOUBLE, FLOAT, DATE, TIME, ENUM,;
+        STRING, INT, DOUBLE, FLOAT, DATE, TIME, ENUM,BOOLEAN, BIT;
 
         public static DataType fromString(String str) {
             DataType[] values = DataType.values();

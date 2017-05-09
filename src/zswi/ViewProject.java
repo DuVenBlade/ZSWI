@@ -29,16 +29,6 @@ public class ViewProject {
     private TreeView<ViewWindow> treeView;
     private Label errorMessage;
     private BorderPane viewPanel;
-    private static final Image[] arrayImages;
-
-    static {
-        arrayImages = new Image[]{
-            ResManager.getImage("red"),
-            ResManager.getImage("orange"),
-            ResManager.getImage("green")
-        };
-
-    }
 
     public ViewProject(Project project) {
         errorMessage = new OLabel("");
@@ -113,7 +103,7 @@ public class ViewProject {
 
     public static Image getStatusImage(int i) {
         try {
-            return arrayImages[i];
+            return ProjectManager.getArrayImages()[i];
         } catch (Exception e) {
             return null;
         }

@@ -22,6 +22,28 @@ public class Constants {
     public static final String dataType = "dataType";
     public static final String meter = "meter";
     public static final String fontSize = "fontSize";
+    //////////////////////////////////////////////////
+    public final static String borderStyle1 = "-fx-padding: 4;" + 
+			//"-fx-border-style: solid inside;" + 
+			"-fx-border-width: 0;" +
+			//"-fx-border-color: black;" +
+			"-fx-background-color: #AAB8ED;";
+    public final static String borderStyle2 = "-fx-padding: 4;" + 
+			//"-fx-border-style: solid inside;" + 
+			"-fx-border-width: 0;" +
+			//"-fx-border-color: black;" +
+			"-fx-background-color: #DEE0E9;";
+    public final static String borderStyle3 = "-fx-padding: 4px;" + 
+			//"-fx-border-style: solid inside;" + 
+			"-fx-border-width: 0;" +
+			//"-fx-border-color: black;" +
+			"-fx-background-color: #DAE8F0;";
+    public static String borderStyle4 = "-fx-padding: 4;" + 
+			"-fx-border-style: solid inside;" + 
+			"-fx-border-width: 1;" +
+			"-fx-border-color: #4C4C4C;" +
+			"-fx-background-color: #FFFFFF;";
+    public final static String borderStyle5 = "-fx-padding: 4;";
     
     
     

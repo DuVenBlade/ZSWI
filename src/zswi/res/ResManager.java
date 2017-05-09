@@ -18,7 +18,7 @@ public class ResManager {
     public static Image getImage(String name) {
         Image img = null;
         try {
-            img = new Image(ResManager.class.getResourceAsStream(defaultAdress + name + ".jpg"));
+            img = new Image(ResManager.class.getResourceAsStream(defaultAdress + name + ".png"));
         } catch (Exception e) {
         }
         return img;
