@@ -3,8 +3,6 @@ package zswi;
 
 import java.util.ArrayList;
 import java.util.List;
-import javafx.scene.Node;
-import javafx.scene.layout.VBox;
 
 
 
@@ -18,13 +16,14 @@ public class Panel {
     }
     public void createTable(){
         Table tb = AlertManager.Table();
-        if(tb!=null)
+        if(tb==null)return;
         listTables.add(tb);
         vPanel.notificate();
     }
     public void removeTable(Table tb){
-        if(tb!=null);
+        if(tb==null)return;
         listTables.remove(tb);
+        vPanel.notificate();
     }
     public List<Table> getListTables() {
         return listTables;

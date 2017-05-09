@@ -26,6 +26,26 @@ public class ViewItem<T extends Node> implements Main.Observabler{
         unit = initUnit();
         setGraphics(name,this.data,unit);
     }
+    public static ViewItem createBitBoolView(final Item item, boolean bool){
+        Cell<OBitBoolPicker> txn = new Cell<OBitBoolPicker>(new OBitBoolPicker(bool)){
+            @Override
+            public void commitEdit() {
+                super.commitEdit();
+                item.setData(this.getItem().getValue());
+            }
+        };
+        return new ViewItem<OBitBoolPicker>(item,txn);
+    }
+    public static ViewItem createEnumView(final Item item){
+        Cell<OEnumPicker> txn = new Cell<OEnumPicker>(new OEnumPicker()){
+            @Override
+            public void commitEdit() {
+                super.commitEdit();
+                item.setData(this.getItem().getValue());
+            }
+        };
+        return new ViewItem<OEnumPicker>(item,txn);
+    }
     public static ViewItem createTextFieldView(final Item item){
         Cell<TextField> txn = new Cell<TextField>(new TextField()){
             @Override
@@ -115,9 +135,7 @@ public class ViewItem<T extends Node> implements Main.Observabler{
     }
     public void setGraphics(HBox ... lb){
         for (HBox label : lb) {
-            label.setStyle("-fx-background-color: white;"
-                            +  "-fx-border: 1px;"
-                            + "-fx-border-color:black");
+            label.setStyle(Constants.borderStyle4);
         }
     }
 

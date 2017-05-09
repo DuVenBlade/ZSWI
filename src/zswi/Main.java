@@ -28,6 +28,7 @@ public class Main extends Application{
         stage.setScene(new Scene(root = new BorderPane()));
         root.setPrefSize(screenSize.width/2, screenSize.height/2);
         ConMenu.setMenu(root);
+        root.setStyle(Constants.borderStyle1);
         stage.show();
     }
     

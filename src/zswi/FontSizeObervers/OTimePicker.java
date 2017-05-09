@@ -10,16 +10,19 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.text.Font;
 import zswi.AlertManager;
+import zswi.res.ResManager;
 
 /**
  *
  * @author DDvory
  */
 public class OTimePicker extends BorderPane implements Observer{
+    private static Image time = ResManager.getImage("time");
     private TextField editor;
     private LocalTime value;
     private Button bt;

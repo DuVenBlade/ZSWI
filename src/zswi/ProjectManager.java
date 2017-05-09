@@ -5,6 +5,8 @@ import java.util.Map;
 import java.util.Optional;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
+import javafx.scene.image.Image;
+import zswi.res.ResManager;
 
 /**
  *
@@ -13,11 +15,29 @@ import javafx.scene.control.ButtonType;
 public class ProjectManager {
 
     //HashTable
+    public final static Image edit = ResManager.getImage("edit");
+    public final static Image error = ResManager.getImage("error");
+    public final static Image menu = ResManager.getImage("menu");
+    private static final Image[] statusImages;
+    static {
+        statusImages = new Image[]{
+            ResManager.getImage("red"),
+            ResManager.getImage("orange"),
+            ResManager.getImage("green")
+        };
+
+    }
+    
     private static ProjectManager INSTANCE;
+
     private Project project;
     private Map<Integer, AFlowable> mapItems;
     private String fileName;
-
+    
+    static Image[] getArrayImages() {
+        return statusImages;
+    }
+    
     private ProjectManager(Project project) {
         this.project = project;
         mapItems = new HashMap();

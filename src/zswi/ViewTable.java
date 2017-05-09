@@ -2,17 +2,11 @@ package zswi;
 
 
 import zswi.FontSizeObervers.OLabel;
-import java.util.ArrayList;
-import java.util.List;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.SplitPane;
-import javafx.scene.control.TableCell;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 
@@ -26,6 +20,7 @@ public class ViewTable implements Main.Observabler{
     private Table table;
     private Label nameLabel;
     private BorderPane viewPane;
+    BorderPane pane = new BorderPane();
     
     public  ViewTable(Table table) {
         this.table =table;
@@ -44,17 +39,26 @@ public class ViewTable implements Main.Observabler{
         return createTable(AlertManager.Table());
     }
     private void init(){
-
+        
         BorderPane p = new BorderPane();
         //Button pro upravu tabulky -> spusti alert
-        Button bt = new Button("Upravit");
+        Button bt = new Button("");
+        ImageView imageView = new ImageView(ProjectManager.edit);
+        imageView.setFitHeight(15);
+        imageView.setFitWidth(15);
+        bt.setGraphic(imageView);
+        
         bt.setOnMouseClicked(e->{
             table.createItem();
         });
 
         p.setLeft(nameLabel);
         p.setRight(bt);
-        viewPane.setTop(p);
+        pane.setTop(p);
+        pane.setStyle(Constants.borderStyle3);
+        viewPane.setCenter(pane);
+        viewPane.setStyle(Constants.borderStyle5);
+        
     }
     public void addItem(Item it){
         if(it==null)return;
@@ -79,7 +83,7 @@ public class ViewTable implements Main.Observabler{
         }
         spl.getItems().addAll(name,data);
         if(show3th)spl.getItems().add(unit);
-        viewPane.setCenter(spl);
+        pane.setCenter(spl);
         
     }
 

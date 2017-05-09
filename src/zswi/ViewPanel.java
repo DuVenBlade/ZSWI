@@ -7,6 +7,7 @@ import java.util.List;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 
@@ -36,12 +37,17 @@ public class ViewPanel implements Main.Observabler {
         pane.setTop(topPanel);
         topPanel.setLeft(panelLabel);
         //Button pro vytvoreni nove tabulky
-        Button bt = new Button("+");
+        Button bt = new Button("");
+        ImageView imageView = new ImageView(ProjectManager.edit);
+        imageView.setFitHeight(15);
+        imageView.setFitWidth(15);
+        bt.setGraphic(imageView);
         bt.setOnAction(e -> {
             panel.createTable();
         });
         topPanel.setRight(bt);
         pane.setCenter(view);
+        pane.setStyle(Constants.borderStyle2);
     }
 
     public Panel getPanel() {

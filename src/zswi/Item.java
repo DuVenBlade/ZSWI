@@ -49,6 +49,8 @@ public class Item<T> extends AFlowable {
         switch(this.getType()){
             case DOUBLE:
             case ENUM:
+            	vItem = ViewItem.createEnumView(this);
+                break;
             case FLOAT:     
             case INT:
             case STRING:
@@ -59,6 +61,13 @@ public class Item<T> extends AFlowable {
                 break;
             case DATE:
               vItem = ViewItem.createDatePickerView(this);
+              	break;
+            case BOOLEAN:
+            	vItem = ViewItem.createBitBoolView(this, true);
+              	break;
+            case BIT:
+            	vItem = ViewItem.createBitBoolView(this, false);
+            	break;
         }
         if(this.getType()==null)vItem = ViewItem.createTextFieldView(this);
     }
