@@ -7,7 +7,7 @@ import javafx.scene.control.DatePicker;
 import javafx.scene.text.Font;
 
 /**
- *
+ *lolo
  * @author DDvory
  */
 public class ODatePicker extends DatePicker implements Observer{
