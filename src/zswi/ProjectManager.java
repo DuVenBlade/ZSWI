@@ -31,7 +31,7 @@ public class ProjectManager {
     private static ProjectManager INSTANCE;
 
     private Project project;
-    private Map<Integer, AFlowable> mapItems;
+    private EnumManager emanager;
     private String fileName;
     
     static Image[] getArrayImages() {
@@ -40,8 +40,8 @@ public class ProjectManager {
     
     private ProjectManager(Project project) {
         this.project = project;
-        mapItems = new HashMap();
-
+        emanager = new EnumManager();
+        Main.getINSTANCE().getRoot().setCenter(project.getvProject().getViewPane());
     }
 
     public static ProjectManager createProject() {
@@ -81,13 +81,11 @@ public class ProjectManager {
         }
         return bool;
     }
-
+    public EnumManager getEnumManager() {
+        return emanager;
+    }
     public static ProjectManager getINSTANCE() {
         return INSTANCE;
-    }
-
-    public void add(AFlowable aflow) {
-        mapItems.put(aflow.getID(), aflow);
     }
 
     public Project getProject() {

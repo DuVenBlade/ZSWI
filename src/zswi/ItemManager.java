@@ -5,6 +5,7 @@ import java.lang.reflect.Method;
 import java.math.BigInteger;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import zswi.EnumManager.EnumItem;
 
 /**
  *
@@ -33,11 +34,24 @@ public class ItemManager {
         }
 
     }
+    public BigInteger getAdress(String data){
+        BigInteger adress =null;
+        try {
+            adress = new BigInteger(data);
+            byte[] arr = adress.toByteArray();
+            if(arr.length>3||(arr.length==3&&arr[0]!=0)){
+                adress=null;
+            }else if(adress.signum()==-1){
+                adress=null;
+            }
+        }catch (Exception e) {}
+        return adress;
+    }
 
     private void setSTRING(String string, Item<String> item) {
         String STRING = null;
         if (string.getBytes().length > item.getDataLen()) {
-            item.correction(false, "Text je příliš dlouhý, zkraťte ho, nebo nastavte buňku na větší dýlku");
+            item.correction(false, "Text je příliš dlouhý, zkraťte ho, nebo nastavte buňku na větší délku");
         }
         STRING = string;
         item.setData(STRING);
@@ -110,27 +124,13 @@ public class ItemManager {
         EnumItem ENUM = null;
         try {
             String[] split = string.split(";");
-            int a = Integer.decode(split[0]);
-            int b = Integer.decode(split[1]);
-            ENUM = new EnumItem(a, b);
+            ENUM = new EnumItem(split[0], split[1]);
         } catch (Exception e) {
             item.correction(false, "Špatná data pro výčtový typ.");
         }
         item.setData(ENUM);
     }
-
-    public static class EnumItem {
-
-        private final int id;
-        private int subId;
-
-        public EnumItem(int id, int subId) {
-            this.id = id;
-            this.subId = subId;
-        }
-
-    }
-    private void setBOOLEAN(String string, Item<Boolean> item) {
+     private void setBOOLEAN(String string, Item<Boolean> item) {
         boolean BOOLEAN = false;
         try {
         	BOOLEAN = Boolean.valueOf(string);
@@ -139,7 +139,6 @@ public class ItemManager {
         }
         item.setData(BOOLEAN);
     }
-    
     private void setBIT(String string, Item<Byte> item) {
         byte BIT = 0;
         try {
@@ -149,7 +148,7 @@ public class ItemManager {
         }
         item.setData(BIT);
     }
-
+    
     public enum DataType {
         STRING, INT, DOUBLE, FLOAT, DATE, TIME, ENUM,BOOLEAN, BIT;
 

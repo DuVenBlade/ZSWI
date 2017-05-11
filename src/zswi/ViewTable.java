@@ -4,9 +4,12 @@ package zswi;
 import zswi.FontSizeObervers.OLabel;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.SplitPane;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 
@@ -30,14 +33,6 @@ public class ViewTable implements Main.Observabler{
         notificate();
     }
     
-    public static ViewTable createTable(Table table){
-        if(table==null)return null;
-        ViewTable tab = new ViewTable(table);
-        return tab;
-    }
-    public static ViewTable createTable(){
-        return createTable(AlertManager.Table());
-    }
     private void init(){
         
         BorderPane p = new BorderPane();
@@ -49,7 +44,7 @@ public class ViewTable implements Main.Observabler{
         bt.setGraphic(imageView);
         
         bt.setOnMouseClicked(e->{
-            table.createItem();
+            showContextMenu(e);
         });
 
         p.setLeft(nameLabel);
@@ -59,6 +54,29 @@ public class ViewTable implements Main.Observabler{
         viewPane.setCenter(pane);
         viewPane.setStyle(Constants.borderStyle5);
         
+    }
+    private void showContextMenu(MouseEvent eh) {
+        ContextMenu contextMenu = new ContextMenu();
+        MenuItem rename = new MenuItem("Přejmenovat tabulku");
+        MenuItem add = new MenuItem("Přidat řádek");
+        MenuItem edit = new MenuItem("Upravit řádek");
+        MenuItem remove = new MenuItem("Odebrat řádek");
+        rename.setOnAction(e->{
+            table.rename();
+        });
+        edit.setOnAction(e->{
+            
+        });
+        remove.setOnAction(e -> {
+            table.removeItem();
+        });
+        add.setOnAction(e -> {
+            table.createItem();
+        });
+        contextMenu.getItems().addAll(rename,add,edit, remove);
+        contextMenu.setX(eh.getScreenX());
+        contextMenu.setY(eh.getScreenY());
+        contextMenu.show(Main.getINSTANCE().getStage());
     }
     public void addItem(Item it){
         if(it==null)return;

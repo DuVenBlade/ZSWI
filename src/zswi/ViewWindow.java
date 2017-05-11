@@ -3,20 +3,12 @@ package zswi;
 
 import zswi.FontSizeObervers.OLabel;
 import java.util.List;
-import java.util.Optional;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.scene.Node;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
 import javafx.scene.control.TreeItem;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import zswi.FontSizeObervers.OImageView;
 
 /**
  *
@@ -33,9 +25,7 @@ public class ViewWindow implements Main.Observabler {
         this.window = window;
 
         treeLabel = new OLabel();
-        statusCircle = new ImageView();
-        statusCircle.setFitWidth(15);
-        statusCircle.setFitHeight(15);
+        statusCircle = new OImageView();
         windows = new TreeItem<>(this,new HBox(statusCircle,treeLabel) );
         updateStatusImage();
         notificate();

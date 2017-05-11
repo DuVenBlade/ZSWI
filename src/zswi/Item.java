@@ -1,21 +1,21 @@
 package zswi;
 
+import java.math.BigInteger;
+
 /**
  *
  * @author DDvory
  */
 public class Item<T> extends AFlowable {
-    private short adress;
+    private BigInteger adress;
     private ItemManager.DataType  type;
     private int dataLen;
     private String format;
     private ViewItem vItem;
     ///////////////////////
-    private boolean correct;
     private String correctMessage;
     /////////////////////////////
     private T data;
-    private String name;
     private String unit;
     
 
@@ -29,32 +29,33 @@ public class Item<T> extends AFlowable {
         init(adress, type, dataLen, format);
     }
 
-    public Item(short adress, ItemManager.DataType type, int dataLen, String format) {
+    public Item(BigInteger adress, ItemManager.DataType type, int dataLen, String format) {
         super();
         init(adress, type, dataLen, format);
     }
     
     private void init(String adress, String type, String dataLen, String format){
-        init(Short.decode(adress),ItemManager.DataType.fromString(type),Integer.decode(dataLen),format);
+        init(ItemManager.getINSTANCE().getAdress(adress),ItemManager.DataType.fromString(type),Integer.decode(dataLen),format);
     }
-    private void init(short adress,ItemManager.DataType type, int dataLen, String format){
+    private void init(BigInteger adress,ItemManager.DataType type, int dataLen, String format){
         this.adress = adress;
         this.type = type;
         this.dataLen = dataLen;
         this.format = format;
+        super.setName(type.toString());
         createView();
+        vItem.notificate();
     }
     private void createView(){
-        
         switch(this.getType()){
             case DOUBLE:
-            case ENUM:
-            	vItem = ViewItem.createEnumView(this);
-                break;
             case FLOAT:     
             case INT:
             case STRING:
-              vItem = ViewItem.createTextFieldView(this);
+                vItem = ViewItem.createTextFieldView(this);
+                break;
+            case ENUM:
+            	vItem = ViewItem.createEnumView(this);
                 break;
             case TIME:
                  vItem = ViewItem.createTimePickerView(this);
@@ -73,11 +74,11 @@ public class Item<T> extends AFlowable {
     }
     
     public void correction(boolean bool, String message){
-        correct = bool;
+        setIsCorrect(bool);
         correctMessage = message;
     }
 
-    public short getAdress() {
+    public BigInteger getAdress() {
         return adress;
     }
 
@@ -93,15 +94,11 @@ public class Item<T> extends AFlowable {
         return format;
     }
 
-    public boolean isCorrect() {
-        return correct;
-    }
-
     public String getCorrectMessage() {
         return correctMessage;
     }
 
-    public void setAdress(short adress) {
+    public void setAdress(BigInteger adress) {
         this.adress = adress;
     }
 
@@ -128,12 +125,9 @@ public class Item<T> extends AFlowable {
         vItem.notificate();
     }
 
-    public String getName() {
-        return name;
-    }
-
+    @Override
     public void setName(String name) {
-        this.name = name;
+        super.setName(name);
         vItem.notificate();
     }
 
@@ -146,10 +140,6 @@ public class Item<T> extends AFlowable {
         vItem.notificate();
     }
 
-    @Override
-    public String toString() {
-        return data.toString();
-    }
     public void setControlData(String str){
         ItemManager.getINSTANCE().setData(str, this);
     }

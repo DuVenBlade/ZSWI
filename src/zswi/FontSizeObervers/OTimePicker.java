@@ -11,10 +11,12 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.text.Font;
 import zswi.AlertManager;
+import zswi.ProjectManager;
 import zswi.res.ResManager;
 
 /**
@@ -48,7 +50,13 @@ public class OTimePicker extends BorderPane implements Observer{
 
     private void init(){
         editor = new TextField();
-        bt = new Button("hodiny");
+        bt = new Button("");
+        
+        ImageView imageView = new ImageView(time);
+        imageView.setFitHeight(15);
+        imageView.setFitWidth(15);
+        bt.setGraphic(imageView);
+        
         bt.setOnMouseClicked(e->{
             LocalTime time = AlertManager.Time(value);
             if(time!=null)value = time;
@@ -81,7 +89,7 @@ public class OTimePicker extends BorderPane implements Observer{
                         
                 }value = time;
             } catch (Exception ex) {
-                ex.printStackTrace();
+                //ex.printStackTrace();
             }
         });
         this.setCenter(editor);

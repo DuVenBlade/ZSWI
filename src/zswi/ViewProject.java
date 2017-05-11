@@ -28,12 +28,14 @@ public class ViewProject {
     private Project project;
     private TreeView<ViewWindow> treeView;
     private Label errorMessage;
-    private BorderPane viewPanel;
+    private BorderPane panelPane;
+    private BorderPane viewPane;
 
     public ViewProject(Project project) {
         errorMessage = new OLabel("");
         this.project = project;
-        viewPanel = new BorderPane();
+        panelPane = new BorderPane();
+        viewPane = new BorderPane();
         init();
     }
 
@@ -42,9 +44,9 @@ public class ViewProject {
         treeView = new TreeView<>(project.getvWindow().getWindows());
         setTVHandler();
         SplitPane spl = new SplitPane();
-        spl.getItems().addAll(treeView, viewPanel);
-        Main.getINSTANCE().getRoot().setCenter(spl);
-        Main.getINSTANCE().getRoot().setBottom(getBottom());
+        spl.getItems().addAll(treeView, panelPane);
+        viewPane.setCenter(spl);
+        viewPane.setBottom(getBottom());
     }
 
     private void setTVHandler() {
@@ -74,10 +76,15 @@ public class ViewProject {
 
     }
 
+    public BorderPane getViewPane() {
+        return viewPane;
+    }
+    
     private void showContextMenu(MouseEvent eh) {
         ContextMenu contextMenu = new ContextMenu();
         MenuItem add = new MenuItem("Přidat větev");
         MenuItem remove = new MenuItem("Odebrat větev");
+        MenuItem rename = new MenuItem("Přejmenovat větev");
         MenuItem addPanel = new MenuItem("Přidat panel");
         MenuItem removePanel = new MenuItem("Odebrat panel");
         ViewWindow value = treeView.getSelectionModel().getSelectedItem().getValue();
@@ -87,6 +94,9 @@ public class ViewProject {
         add.setOnAction(e -> {
             value.getWindow().createWindow();
         });
+        rename.setOnAction(e->{
+            value.getWindow().rename();
+        });
         addPanel.setOnAction(e -> {
             value.getWindow().createPanel();
             this.selectItem();
@@ -95,7 +105,7 @@ public class ViewProject {
             value.getWindow().removePanel();
             this.selectItem();
         });
-        contextMenu.getItems().addAll(add, remove, addPanel, removePanel);
+        contextMenu.getItems().addAll(add, remove, rename,addPanel, removePanel);
         contextMenu.setX(eh.getScreenX());
         contextMenu.setY(eh.getScreenY());
         contextMenu.show(Main.getINSTANCE().getStage());
@@ -115,7 +125,7 @@ public class ViewProject {
     }
 
     public void setViewPanel(ViewWindow cw) {
-        this.viewPanel.setCenter(cw.getView());
+        this.panelPane.setCenter(cw.getView());
     }
 
     public static void SetErrorHandler(Node node, Label messageLabel, String text) {
