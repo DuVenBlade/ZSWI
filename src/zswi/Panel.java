@@ -15,9 +15,9 @@ public class Panel {
         vPanel = new ViewPanel(this);
     }
     public void createTable(){
-        Table tb = AlertManager.Table();
+        String tb = AlertManager.getName("Vytvořit tabulku: ");
         if(tb==null)return;
-        listTables.add(tb);
+        listTables.add(new Table(tb, null));
         vPanel.notificate();
     }
     public void removeTable(Table tb){
@@ -40,5 +40,11 @@ public class Panel {
     public void setStatus(boolean status) {
         this.status = status;
     }
+    public void removeTable(){
+        Table selectValue =(Table) AlertManager.selectValue(listTables, "Vyber tabulku:");
+        removeTable(selectValue);
+
+    }
+    
          
 }

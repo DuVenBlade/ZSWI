@@ -151,13 +151,13 @@ public class ViewItem<T extends Node> implements Main.Observabler{
         return this;
     }
     private static  class Cell<S extends Node> extends HBox{
-        private S editingItem;
+        private S eItem;
         private Label lb;
         private String cashText;
         private boolean isInEdit = false;
 
         public Cell(S item) {
-            this.editingItem = item;
+            this.eItem = item;
             this.setOnMouseClicked(e->{
                 if(e.getClickCount()==2){
                     isInEdit = true;
@@ -182,7 +182,7 @@ public class ViewItem<T extends Node> implements Main.Observabler{
         
         public void startEdit(){
             this.setText("");
-            lb.setGraphic(editingItem);
+            lb.setGraphic(eItem);
         }
         public void cancleEdit(){
             this.setText(cashText);
@@ -194,7 +194,7 @@ public class ViewItem<T extends Node> implements Main.Observabler{
         }
 
         public S getItem() {
-            return editingItem;
+            return eItem;
         }
         
     }

@@ -3,10 +3,6 @@ package zswi;
 
 import java.util.ArrayList;
 import java.util.List;
-import javafx.collections.ObservableList;
-import javafx.scene.Node;
-import javafx.scene.control.Label;
-import javafx.scene.control.TableView;
 
 /**
  *
@@ -30,11 +26,14 @@ public class Table extends AFlowable {
         setName(name);
     }
     public void createItem(){
-        Item item  =AlertManager.Item();
+        addItem(AlertManager.Item());
+    }
+    public void addItem(Item item){
         if(item!=null)listItems.add(item);
         vTable.notificate();
     }
     public void removeItem(Item item){
+        if(item==null)return;
         listItems.remove(item);
         vTable.notificate();
     }
@@ -51,6 +50,14 @@ public class Table extends AFlowable {
 
     public ViewTable getvTable() {
         return vTable;
+    }
+    public void removeItem(){
+        Item selectValue =(Item) AlertManager.selectValue(listItems, "Vyberte řádek:");
+        removeItem(selectValue);
+    }
+    public void rename(){
+        String s = AlertManager.getName("Přejmenovat Tabulku: ");
+        if(s!=null)setName(s);
     }
     
 }

@@ -44,6 +44,11 @@ public class Constants {
 			"-fx-border-color: #4C4C4C;" +
 			"-fx-background-color: #FFFFFF;";
     public final static String borderStyle5 = "-fx-padding: 4;";
+    public final static String borderStyle6 = "-fx-padding: 4;" + 
+			"-fx-border-style: solid inside;" + 
+			"-fx-border-width: 1;" +
+			"-fx-border-color: #4C4C4C;" +
+			"-fx-background-color: #FFFFFF;";
     
     
     
