@@ -6,7 +6,7 @@ import java.util.List;
 
 
 
-public class Panel {
+public class Panel implements IUpdatable{
     private List<Table> listTables;
     private ViewPanel vPanel;
     private boolean status = true;
@@ -15,7 +15,7 @@ public class Panel {
         vPanel = new ViewPanel(this);
     }
     public void createTable(){
-        String tb = AlertManager.getName("Vytvořit tabulku: ");
+        String tb = AlertManager.getName("Vytvořit tabulku: ","");
         if(tb==null)return;
         listTables.add(new Table(tb, null));
         vPanel.notificate();
@@ -45,6 +45,16 @@ public class Panel {
         removeTable(selectValue);
 
     }
-    
-         
+    public void translate(LanguageManager langManager, int from, int to) {
+        for (Table listTable : listTables) {
+            listTable.translate(langManager, from, to);
+        }
+    }
+    @Override
+    public void updateAll(){
+        this.vPanel.notificate();
+        for (Table listTable : listTables) {
+            listTable.updateAll();
+        }
+    }    
 }

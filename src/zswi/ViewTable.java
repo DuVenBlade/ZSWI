@@ -18,7 +18,6 @@ import javafx.scene.layout.VBox;
  * @author DDvory
  */
 public class ViewTable implements Main.Observabler{
-    //rok mesic den ->  local date
     
     private Table table;
     private Label nameLabel;
@@ -36,7 +35,6 @@ public class ViewTable implements Main.Observabler{
     private void init(){
         
         BorderPane p = new BorderPane();
-        //Button pro upravu tabulky -> spusti alert
         Button bt = new Button("");
         ImageView imageView = new ImageView(ProjectManager.edit);
         imageView.setFitHeight(15);
@@ -93,14 +91,17 @@ public class ViewTable implements Main.Observabler{
         VBox data = new VBox();
         VBox unit = new VBox();
         for (Item item : table.getListItems()) {
-            //if(item.isSet3Row())show3th = true;
+            if(item.isShowUnit())show3th = true;
             ViewItem vItem = item.getvItem().getView();
             name.getChildren().add(vItem.getName());
             data.getChildren().add(vItem.getData());
             unit.getChildren().add(vItem.getUnit());
         }
         spl.getItems().addAll(name,data);
-        if(show3th)spl.getItems().add(unit);
+        if(show3th){
+            spl.getItems().add(unit);
+            spl.setDividerPositions(0.33333f, 0.66666f, 1f);
+        }
         pane.setCenter(spl);
         
     }

@@ -5,7 +5,6 @@ import java.lang.reflect.Method;
 import java.math.BigInteger;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import zswi.EnumManager.EnumItem;
 
 /**
  *
@@ -48,52 +47,57 @@ public class ItemManager {
         return adress;
     }
 
-    private void setSTRING(String string, Item<String> item) {
+    private void setSTRING(String string, Item item) {
         String STRING = null;
-        if (string.getBytes().length > item.getDataLen()) {
+        Item_String value = (Item_String)item.getValue();
+        if (string.getBytes().length > value.getLen()) {
             item.correction(false, "Text je příliš dlouhý, zkraťte ho, nebo nastavte buňku na větší délku");
         }
         STRING = string;
-        item.setData(STRING);
+        value.setValue(STRING);
     }
 
-    private void setDOUBLE(String string, Item<Double> item) {
+    private void setDOUBLE(String string, Item item) {
         double DOUBLE = 0;
+        Item_DoFl<Double> value = (Item_DoFl)item.getValue();
         try {
             DOUBLE = Double.valueOf(string);
-        } catch (Exception e) {
+        } catch (Exception e) {  
             item.correction(false, "Špatný formát čísla");
         }
-        item.setData(DOUBLE);
+        value.setValue(DOUBLE);
     }
 
-    private void setFLOAT(String string, Item<Float> item) {
+    private void setFLOAT(String string, Item item) {
         float FLOAT = 0;
+        Item_DoFl<Float> value = (Item_DoFl)item.getValue();
         try {
             FLOAT = Float.valueOf(string);
         } catch (Exception e) {
             item.correction(false, "Špatný formát čísla");
         }
-        item.setData(FLOAT);
+        value.setValue(FLOAT);
     }
 
-    private void setINT(String string, Item<BigInteger> item) {
+    private void setINT(String string, Item item) {
         BigInteger INT = null;
+        Item_Int value = (Item_Int)item.getValue();
         try {
             BigInteger integ = new BigInteger(string);
             byte[] byt = integ.toByteArray();
-            if (!(byt.length <= item.getDataLen() || byt.length == item.getDataLen() + 1 && byt[0] == 0)) {
+            if (!(byt.length <= value.getLen() || byt.length == value.getLen() + 1 && byt[0] == 0)) {
                 throw new IllegalArgumentException();
             }
             INT = integ;
         } catch (Exception e) {
             item.correction(false, "Špatný formát čísla, nebo je číslo příliš veliké");
         }
-        item.setData(INT);
+        value.setValue(INT);
     }
 
-    private void setDATE(String string, Item<LocalDate> item) {
+    private void setDATE(String string, Item item) {
         LocalDate DATE = null;
+        Item_DaTi value = (Item_DaTi)item.getValue();
         try {
             String[] split = string.split(";");
             int a = Integer.decode(split[0]);
@@ -103,11 +107,12 @@ public class ItemManager {
         } catch (Exception e) {
             item.correction(false, "Špatná data pro datum.");
         }
-        item.setData(DATE);
+        value.setValue(DATE);
     }
 
-    private void setTIME(String string, Item<LocalTime> item) {
+    private void setTIME(String string, Item item) {
         LocalTime TIME = null;
+        Item_DaTi value = (Item_DaTi)item.getValue();
         try {
             String[] split = string.split(":");
             int a = Integer.decode(split[0]);
@@ -117,36 +122,37 @@ public class ItemManager {
         } catch (Exception e) {
             item.correction(false, "Špatná data pro čas.");
         }
-        item.setData(TIME);
+        value.setValue(TIME);
     }
 
-    private void setENUM(String string, Item<EnumItem> item) {
-        EnumItem ENUM = null;
+    private void setENUM(String string, Item item) {
+        Item_Enum ENUM = null;
+        Item_DaTi value = (Item_DaTi)item.getValue();
         try {
             String[] split = string.split(";");
-            ENUM = new EnumItem(split[0], split[1]);
+            ENUM = new Item_Enum(split[0], split[1]);
         } catch (Exception e) {
             item.correction(false, "Špatná data pro výčtový typ.");
         }
-        item.setData(ENUM);
+        value.setValue(ENUM);
     }
-     private void setBOOLEAN(String string, Item<Boolean> item) {
+     private void setBOOLEAN(String string, Item item) {
         boolean BOOLEAN = false;
         try {
         	BOOLEAN = Boolean.valueOf(string);
         } catch (Exception e) {
             item.correction(false, "Špatný formát booleanu");
         }
-        item.setData(BOOLEAN);
+        item.setValue(BOOLEAN);
     }
-    private void setBIT(String string, Item<Byte> item) {
+    private void setBIT(String string, Item item) {
         byte BIT = 0;
         try {
         	BIT = Byte.valueOf(string);
         } catch (Exception e) {
             item.correction(false, "Špatný formát bitu");
         }
-        item.setData(BIT);
+        item.setValue(BIT);
     }
     
     public enum DataType {

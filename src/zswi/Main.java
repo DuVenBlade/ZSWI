@@ -4,11 +4,7 @@ package zswi;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import javafx.application.Application;
-import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
@@ -48,19 +44,8 @@ public class Main extends Application{
         return INSTANCE;
     }
     
-    
-    public static Alert getAlert(AlertType type, String title, String headerText, String content, Node graphics) {
-        Alert tmp = new Alert(type);
-        tmp.setTitle(title);
-        tmp.setHeaderText(headerText);
-        tmp.setContentText(content);
-        tmp.getDialogPane().setContent(graphics);
-        return tmp;
-    }
-   
      public static interface Observabler {
         public void notificate();
         public Object getView();
     }
-
 }

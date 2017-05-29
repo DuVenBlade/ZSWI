@@ -6,45 +6,35 @@ import java.math.BigInteger;
  *
  * @author DDvory
  */
-public class Item<T> extends AFlowable {
+public class Item extends AFlowable implements IUpdatable{
     private BigInteger adress;
     private ItemManager.DataType  type;
-    private int dataLen;
-    private String format;
     private ViewItem vItem;
+    private boolean showUnit;
     ///////////////////////
     private String correctMessage;
     /////////////////////////////
-    private T data;
+    private IValuable value;
     private String unit;
-    
 
-    public Item(int id, String adress, String type, String dataLen, String format) {
-        super(id);
-        init(adress, type, dataLen, format);
+    public Item(String adress, String type, String showUnit, IValuable value) {
+        init(adress, type, showUnit,value);
     }
 
-    public Item(String adress, String type, String dataLen, String format) {
-        super();
-        init(adress, type, dataLen, format);
-    }
-
-    public Item(BigInteger adress, ItemManager.DataType type, int dataLen, String format) {
-        super();
-        init(adress, type, dataLen, format);
+    public Item(BigInteger adress, ItemManager.DataType type,  boolean showUnit, IValuable value) {
+        init(adress, type, showUnit, value);
     }
     
-    private void init(String adress, String type, String dataLen, String format){
-        init(ItemManager.getINSTANCE().getAdress(adress),ItemManager.DataType.fromString(type),Integer.decode(dataLen),format);
+    private void init(String adress, String type, String showUnit, IValuable value){
+        init(ItemManager.getINSTANCE().getAdress(adress),ItemManager.DataType.fromString(type), Boolean.valueOf(showUnit), value);
     }
-    private void init(BigInteger adress,ItemManager.DataType type, int dataLen, String format){
+    private void init(BigInteger adress,ItemManager.DataType type, boolean showUnit, IValuable value){
         this.adress = adress;
         this.type = type;
-        this.dataLen = dataLen;
-        this.format = format;
+        this.showUnit = showUnit;
         super.setName(type.toString());
+        value.setItem(this);
         createView();
-        vItem.notificate();
     }
     private void createView(){
         switch(this.getType()){
@@ -70,7 +60,10 @@ public class Item<T> extends AFlowable {
             	vItem = ViewItem.createBitBoolView(this, false);
             	break;
         }
-        if(this.getType()==null)vItem = ViewItem.createTextFieldView(this);
+        if(this.getType()==null){
+            vItem = ViewItem.createTextFieldView(this);
+            vItem.notificate();
+        }
     }
     
     public void correction(boolean bool, String message){
@@ -86,14 +79,6 @@ public class Item<T> extends AFlowable {
         return type;
     }
 
-    public int getDataLen() {
-        return dataLen;
-    }
-
-    public String getFormat() {
-        return format;
-    }
-
     public String getCorrectMessage() {
         return correctMessage;
     }
@@ -106,29 +91,25 @@ public class Item<T> extends AFlowable {
         this.type = type;
     }
 
-    public void setDataLen(int dataLen) {
-        this.dataLen = dataLen;
+    public Object getData() {
+        return value;
+    }
+    public void updateValue(Object obj){
+        
     }
 
-    public void setFormat(String format) {
-        this.format = format;
-        vItem.notificate();
-    }
-    
-
-    public T getData() {
-        return data;
-    }
-
-    public void setData(T data) {
-        this.data = data;
-        vItem.notificate();
+    public IValuable getValue() {
+        return value;
     }
 
     @Override
     public void setName(String name) {
         super.setName(name);
         vItem.notificate();
+    }
+
+    public boolean isShowUnit() {
+        return showUnit;
     }
 
     public String getUnit() {
@@ -147,4 +128,15 @@ public class Item<T> extends AFlowable {
     public ViewItem getvItem() {
         return vItem;
     }
+
+    @Override
+    public void translate(LanguageManager langManager, int from, int to) {
+        langManager.translate(this, from, to);
+    }
+
+    @Override
+    public void updateAll() {
+        this.vItem.notificate();
+    }
+    
 }

@@ -3,30 +3,12 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
+            <file>file:/C:/Users/DDvory/Documents/NetBeansProjects/ZSWI/src/zswi/Item_Enum.java</file>
             <file>file:/C:/Users/DDvory/Documents/NetBeansProjects/ZSWI/src/zswi/Item.java</file>
-            <file>file:/C:/Users/DDvory/Documents/NetBeansProjects/ZSWI/src/zswi/FontSizeObervers/OTimePicker.java</file>
-            <file>file:/C:/Users/DDvory/Documents/NetBeansProjects/ZSWI/src/zswi/Panel.java</file>
-            <file>file:/C:/Users/DDvory/Documents/NetBeansProjects/ZSWI/src/zswi/Name.java</file>
-            <file>file:/C:/Users/DDvory/Documents/NetBeansProjects/ZSWI/src/zswi/Window.java</file>
-            <file>file:/C:/Users/DDvory/Documents/NetBeansProjects/ZSWI/src/zswi/Table.java</file>
-            <file>file:/C:/Users/DDvory/Documents/NetBeansProjects/ZSWI/src/zswi/res/ResManager.java</file>
-            <file>file:/C:/Users/DDvory/Documents/NetBeansProjects/ZSWI/src/zswi/ViewItem.java</file>
-            <file>file:/C:/Users/DDvory/Documents/NetBeansProjects/ZSWI/src/zswi/ViewPanel.java</file>
-            <file>file:/C:/Users/DDvory/Documents/NetBeansProjects/ZSWI/src/zswi/ProjectManager.java</file>
-            <file>file:/C:/Users/DDvory/Documents/NetBeansProjects/ZSWI/src/zswi/Constants.java</file>
-            <file>file:/C:/Users/DDvory/Documents/NetBeansProjects/ZSWI/src/zswi/AlertManager.java</file>
-            <file>file:/C:/Users/DDvory/Documents/NetBeansProjects/ZSWI/src/zswi/Project.java</file>
             <file>file:/C:/Users/DDvory/Documents/NetBeansProjects/ZSWI/src/zswi/ItemManager.java</file>
-            <file>file:/C:/Users/DDvory/Documents/NetBeansProjects/ZSWI/src/zswi/Main.java</file>
-            <file>file:/C:/Users/DDvory/Documents/NetBeansProjects/ZSWI/src/zswi/FontSizeObervers/OEnumPicker.java</file>
-            <file>file:/C:/Users/DDvory/Documents/NetBeansProjects/ZSWI/src/zswi/ConMenu.java</file>
-            <file>file:/C:/Users/DDvory/Documents/NetBeansProjects/ZSWI/src/zswi/ViewTable.java</file>
-            <file>file:/C:/Users/DDvory/Documents/NetBeansProjects/ZSWI/src/zswi/EnumManager.java</file>
-            <file>file:/C:/Users/DDvory/Documents/NetBeansProjects/ZSWI/src/zswi/ViewProject.java</file>
-            <file>file:/C:/Users/DDvory/Documents/NetBeansProjects/ZSWI/src/zswi/ViewWindow.java</file>
-            <file>file:/C:/Users/DDvory/Documents/NetBeansProjects/ZSWI/src/zswi/FontSizeObervers/OLabel.java</file>
-            <file>file:/C:/Users/DDvory/Documents/NetBeansProjects/ZSWI/src/zswi/FontSizeObervers/OImageView.java</file>
-            <file>file:/C:/Users/DDvory/Documents/NetBeansProjects/ZSWI/src/zswi/AFlowable.java</file>
+            <file>file:/C:/Users/DDvory/Documents/NetBeansProjects/ZSWI/src/zswi/Item_String.java</file>
+            <file>file:/C:/Users/DDvory/Documents/NetBeansProjects/ZSWI/src/zswi/Item_Int.java</file>
+            <file>file:/C:/Users/DDvory/Documents/NetBeansProjects/ZSWI/src/zswi/Item_DoFl.java</file>
         </group>
     </open-files>
 </project-private>

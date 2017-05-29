@@ -22,8 +22,8 @@ public class OImageView extends ImageView implements Observer{
     }
 
     private void setFontSize(int size) {
-        this.setFitWidth(size);
-        this.setFitHeight(size);
+        this.setFitWidth(size*1.2);
+        this.setFitHeight(size*1.2);
     }
 
 }
