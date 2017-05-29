@@ -4,30 +4,24 @@ import java.util.Hashtable;
 import java.util.Map;
 
 public abstract class AFlowable {
-    public static int incrementalId = 0;
     private boolean isCorrect;
     private Map<Integer, Name> mapNames = null;
-    private int ID;
-    
+ 
     public AFlowable() {
-        this(getIncrementalIdAdd());
+        this("");
     }
-
-    public AFlowable(int id) {
-        this(id,"");
+    public AFlowable(Name ... names){
+         mapNames = new Hashtable<>();
+        for (Name name : names) {
+            mapNames.put(name.getLanguageId(), name);
+        }
     }
-    public AFlowable(int id,String name){
+    public AFlowable(String name){
         isCorrect = true;
-        if(id >= incrementalId)incrementalId = id+1;
-        this.setID(id);
         if(ProjectManager.getINSTANCE()!=null){
             mapNames = new Hashtable<>();
             this.setNm(name);
         }
-    }
-    
-    public static void clearIncrement(){
-        incrementalId = 0;
     }
 
     public boolean isCorrect() {
@@ -37,26 +31,10 @@ public abstract class AFlowable {
     public void setIsCorrect(boolean isCorrect) {
         this.isCorrect = isCorrect;
     }
-    
-    private static int getIncrementalIdAdd() {
-        return incrementalId++;
-    }
-    
-
-    public int getID() {
-        return ID;
-    }
-
-    public void setID(int ID) {
-        this.ID = ID;
-    }
 
     public String getName() {
-        int language = ProjectManager.getINSTANCE().getProject().getLanguage();
-        Name get = mapNames.get(language);
-        if(get==null)return "";
-        else return get.getName();
-        
+        int id = ProjectManager.getINSTANCE().getProject().getLanguage();
+        return getName(id);
     }
 
     public void setName(String name) {
@@ -64,13 +42,21 @@ public abstract class AFlowable {
     }
     private void setNm(String name){
         int language = ProjectManager.getINSTANCE().getProject().getLanguage();
-        Name get = mapNames.get(language);
-        if(get!=null) get.setName(name);
-        else mapNames.put(language, new Name(language,name));
+        setName(new Name(language,name));
     }
-
+    public void setName(Name name){
+        Name get = mapNames.get(name.getLanguageId());
+        if(get!=null) get.setName(name.getName());
+        else mapNames.put(name.getLanguageId(), name);
+    }
+    public String getName(int id){
+        Name get = mapNames.get(id);
+        if(get==null)return "";
+        else return get.getName();
+    }
     @Override
     public String toString() {
         return getName();
     }
+    public abstract void translate(LanguageManager langManager,int from, int to);
 }

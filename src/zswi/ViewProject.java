@@ -1,38 +1,44 @@
 package zswi;
 
-import javafx.event.EventType;
-import zswi.res.*;
+import javafx.collections.FXCollections;
 import zswi.FontSizeObervers.OLabel;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import zswi.FontSizeObervers.FontSize;
+import zswi.FontSizeObervers.OImageView;
+import zswi.Main.Observabler;
 
 /**
  *
  * @author DDvory
  */
-public class ViewProject {
+public class ViewProject implements Observabler {
 
     private Project project;
     private TreeView<ViewWindow> treeView;
-    private Label errorMessage;
+    private ErrorLabel errorMessage;
     private BorderPane panelPane;
     private BorderPane viewPane;
+    private boolean onChange = true;
+    ChoiceBox<LanguageManager.Language> langs;
 
     public ViewProject(Project project) {
-        errorMessage = new OLabel("");
+        errorMessage = new ErrorLabel();
         this.project = project;
         panelPane = new BorderPane();
         viewPane = new BorderPane();
@@ -75,10 +81,6 @@ public class ViewProject {
         }
 
     }
-
-    public BorderPane getViewPane() {
-        return viewPane;
-    }
     
     private void showContextMenu(MouseEvent eh) {
         ContextMenu contextMenu = new ContextMenu();
@@ -98,7 +100,7 @@ public class ViewProject {
             value.getWindow().rename();
         });
         addPanel.setOnAction(e -> {
-            value.getWindow().createPanel();
+            value.getWindow().setPanel();
             this.selectItem();
         });
         removePanel.setOnAction(e -> {
@@ -120,7 +122,7 @@ public class ViewProject {
 
     }
 
-    public Label getErrorMessage() {
+    public ErrorLabel getErrorMessage() {
         return errorMessage;
     }
 
@@ -149,9 +151,18 @@ public class ViewProject {
 
     private BorderPane getBottom() {
         BorderPane pane = new BorderPane();
-        HBox box = new HBox();
+        pane.setLeft(getSize());
+        pane.setCenter(getLanguage());
+        pane.setRight(errorMessage);
+        return pane;
+    }
+    private HBox getSize(){
+         HBox box = new HBox();
+        box.setStyle(Constants.borderStyle5);
         Label size = new Label("Velikost písma: ");
         TextField eSize = new TextField();
+        eSize.setText(FontSize.getSize()+"");
+        eSize.setPrefWidth(50);
         eSize.setOnKeyReleased(e -> {
             if (e.getCode() == KeyCode.ENTER) {
                 try {
@@ -165,8 +176,88 @@ public class ViewProject {
 
         });
         box.getChildren().addAll(size, eSize);
-        pane.setLeft(box);
-        return pane;
+        return box;
+    }
+    
+    private HBox getLanguage(){
+        HBox box = new HBox();
+        box.setStyle(Constants.borderStyle5);
+        Label lang = new Label("Jazyk: ");
+        Button bt = new Button("");
+        langs = new ChoiceBox<>();
+        langs.getSelectionModel().selectedItemProperty().addListener(event -> {
+            LanguageManager.Language value = langs.getSelectionModel().getSelectedItem();
+            if(value!=null){
+                project.setLanguage(value.getId());
+                project.updateAll();
+            }
+        });
+        bt.setOnMouseClicked(e->{
+            showLanguageContextMenu(e);
+        });
+        ImageView imageView = new ImageView(ProjectManager.edit);
+        imageView.setFitHeight(15);
+        imageView.setFitWidth(15);
+        bt.setGraphic(imageView);
+        box.getChildren().addAll(lang,langs,new Label(" __ "),bt);
+        return box;
+    }
+    public void updateLanguage(){
+        langs.getItems().clear();
+        langs.getItems().addAll(project.getListLanguages());
+        langs.getSelectionModel().select(LanguageManager.getListLanguages().get(project.getLanguage()));
+        if(langs.getSelectionModel().getSelectedItem()==null){
+            langs.getSelectionModel().selectFirst();
+        }
+    }
+    private void showLanguageContextMenu(MouseEvent eh) {
+        ContextMenu contextMenu = new ContextMenu();
+        MenuItem add = new MenuItem("Přidat jazyk");
+        MenuItem remove = new MenuItem("Odebrat jazyk");
+        remove.setOnAction(e -> {
+            project.removeLanguage();
+        });
+        add.setOnAction(e -> {
+            project.addLanguage();
+        });
+        contextMenu.getItems().addAll(add, remove);
+        contextMenu.setX(eh.getScreenX());
+        contextMenu.setY(eh.getScreenY());
+        contextMenu.show(Main.getINSTANCE().getStage());
     }
 
+    @Override
+    public void notificate() {
+        Main instance = Main.getINSTANCE();
+        instance.getRoot().setCenter((BorderPane)getView());
+        instance.getStage().setTitle(project.getName());
+        langs.getSelectionModel().select(LanguageManager.getListLanguages().get(project.getLanguage()));
+        if(langs.getSelectionModel().getSelectedItem()==null){
+            langs.getSelectionModel().selectFirst();
+        }
+    }
+
+    @Override
+    public Object getView() {
+        return viewPane;
+    }
+    public class ErrorLabel extends HBox{
+        ImageView view;
+        Label errorMessage;
+
+        public ErrorLabel() {
+            errorMessage = new Label();
+            view = new ImageView();
+            view.setFitWidth(20);
+            view.setFitHeight(20);
+            this.getChildren().addAll(view, new Label(" "), errorMessage);
+            errorMessage.setStyle("-fx-font-weight: 900;-fx-font-size: 15");
+            this.setStyle(Constants.borderStyle5);
+        }
+        public void setMessage(boolean bool, String text){
+            if(bool)view.setImage(ProjectManager.error);
+            else view.setImage(null);
+            errorMessage.setText(text);
+        }
+    }
 }

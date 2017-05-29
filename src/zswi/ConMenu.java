@@ -1,6 +1,8 @@
 package zswi;
 
 
+import javafx.scene.Node;
+import javafx.scene.control.CheckMenuItem;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
@@ -30,22 +32,34 @@ public class ConMenu {
         MenuItem openItem = new MenuItem("_Otevřít");
         MenuItem saveItem = new MenuItem("_Uložit");
         MenuItem saveAsItem = new MenuItem("Uložit _Jako");
-        MenuItem importItem = new MenuItem("_Importovat Jazyk");
-        MenuItem exportItem = new MenuItem("_Exportovat Jazyk");
-
+        CheckMenuItem enumItem = new CheckMenuItem("Nastavit Enu_my");
+        enumItem.setSelected(true);
+        //------------------------------------------------------------
         newItem.setOnAction(event -> ProjectManager.createProject());
-//        openItem.setOnAction(event -> loadProject());
-        //saveItem.setOnAction(event -> );
-        //saveAsItem.setOnAction(event -> );
-        //importItem.setOnAction(event -> );
-        //exportItem.setOnAction(event -> );
-
+        enumItem.setOnAction(event -> {
+            if(ProjectManager.getINSTANCE()!=null)
+            changeEnumButton(enumItem);
+            else enumItem.setSelected(true);
+                });
+        //-----------------------------------------------------------
         fileMenu.getItems().addAll(
                 newItem, openItem, new SeparatorMenuItem(),
                 saveItem, saveAsItem, new SeparatorMenuItem(),
-                importItem, exportItem);
+                enumItem);
         return fileMenu;
     }
-
+    private static void changeEnumButton(CheckMenuItem enumItem) {
+		if(enumItem.isSelected()) {
+			enumItem.setText("Nastavit Enu_my");
+			Main.getINSTANCE().getRoot().setCenter(
+					(Node)ProjectManager.getINSTANCE().getProject().getvProject().getView());
+		} else {
+			enumItem.setText("Nastavit _Projekt");
+			EnumView temp = ProjectManager.getINSTANCE().getEnumManager().getvEnum();
+			Main.getINSTANCE().getRoot().setCenter(
+					(Node) temp.getView());
+			temp.notificate();
+		}
+	}
 
 }

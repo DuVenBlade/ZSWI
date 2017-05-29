@@ -7,80 +7,81 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
 import zswi.FontSizeObervers.*;
+import zswi.ViewProject.ErrorLabel;
 
 /**
  *
  * @author DDvory
  * @param <T>
  */
-public class ViewItem<T extends Node> implements Main.Observabler{
+public class ViewItem implements Main.Observabler{
     private Item item;
     private Cell<TextField> name;
-    private Cell<T> data;
+    private Cell<Node> data;
     private Cell<TextField> unit;
 
-    private ViewItem(Item cit, Cell<T> data) {
+    private ViewItem(Item cit, Cell<Node> data) {
         this.item = cit;
         this.data = data;
         name = initName();
         unit = initUnit();
-        setGraphics(name,this.data,unit);
+        setGeNormal(name,this.data,unit);
     }
     public static ViewItem createBitBoolView(final Item item, boolean bool){
-        Cell<OBitBoolPicker> txn = new Cell<OBitBoolPicker>(new OBitBoolPicker(bool)){
+        Cell txn = new Cell<OBitBoolPicker>(new OBitBoolPicker(bool)){
             @Override
             public void commitEdit() {
                 super.commitEdit();
-                item.setData(this.getItem().getValue());
+                //SetValue
             }
         };
-        return new ViewItem<OBitBoolPicker>(item,txn);
+        return new ViewItem(item,txn);
     }
     public static ViewItem createEnumView(final Item item){
-        Cell<OEnumPicker> txn = new Cell<OEnumPicker>(new OEnumPicker()){
+        Cell txn = new Cell<OEnumPicker>(new OEnumPicker()){
             @Override
             public void commitEdit() {
                 super.commitEdit();
-                item.setData(this.getItem().getValue());
+                //SetValue
             }
         };
-        return new ViewItem<OEnumPicker>(item,txn);
+        return new ViewItem(item,txn);
     }
     public static ViewItem createTextFieldView(final Item item){
-        Cell<TextField> txn = new Cell<TextField>(new TextField()){
+        Cell txn = new Cell<TextField>(new TextField()){
             @Override
             public void commitEdit() {
                 super.commitEdit();
                 item.setControlData(this.getItem().getText());
             }
         };
-        return new ViewItem<TextField>(item,txn);
+        return new ViewItem(item,txn);
     }
     public static ViewItem createDatePickerView(final Item item){
-        Cell<ODatePicker> txn = new Cell<ODatePicker>(new ODatePicker()){
+        Cell txn = new Cell<ODatePicker>(new ODatePicker()){
 
             @Override
             public void commitEdit() {
                 super.commitEdit();
-                item.setData(this.getItem().getValue());
+                //SetValue
             }
         };
-        return new ViewItem<ODatePicker>(item,txn);
+        return new ViewItem(item,txn);
     }
     public static ViewItem createTimePickerView(final Item item){
-        Cell<OTimePicker> txn = new Cell<OTimePicker>(new OTimePicker()){
+        Cell txn = new Cell<OTimePicker>(new OTimePicker()){
 
             @Override
             public void commitEdit() {
                 super.commitEdit();
-                item.setData(this.getItem().getValue());
+                Item_DaTi value = (Item_DaTi)item.getValue();
+                
             }
         };
-        return new ViewItem<OTimePicker>(item,txn);
+        return new ViewItem(item,txn);
     }
     private Cell<TextField> initName(){
         Cell<TextField> txn = new Cell<TextField>(new TextField()){
-
             @Override
             public void commitEdit() {
                 super.commitEdit();
@@ -91,8 +92,7 @@ public class ViewItem<T extends Node> implements Main.Observabler{
     }
     private Cell<TextField> initUnit(){
         Cell<TextField> txn = new Cell<TextField>(new TextField()){
-
-            @Override
+             @Override
             public void commitEdit() {
                 super.commitEdit();
                 item.setUnit(this.getItem().getText());
@@ -116,26 +116,41 @@ public class ViewItem<T extends Node> implements Main.Observabler{
         return name;
     }
 
-    public Cell<T> getData() {
+    public Cell<Node> getData() {
         return data;
     }
 
     public Cell<TextField> getUnit() {
         return unit;
     }
-
+    public void setGe(boolean bool){
+        if(bool)setGeNormal(data);
+        else setGeErr(data);
+    }
     
-    public void setErrGraphics(HBox ... lb){
+    public void setGeErr(HBox ... lb){
+        ErrorLabel lab = ProjectManager.getINSTANCE().getProject().getvProject().getErrorMessage();
         for (HBox label : lb) {
-            label.setStyle("-fx-control-inner-background: red;"
-                            );
-            
+            label.setStyle(Constants.borderStyle6);
+            label.setOnMouseEntered(e->{
+                lab.setMessage(true,item.getCorrectMessage());
+            });
+            label.setOnMouseExited(e->{
+                lab.setMessage(false,"");
+            });
         }
         
     }
-    public void setGraphics(HBox ... lb){
+    public void setGeNormal(HBox ... lb){
+        ErrorLabel lab = ProjectManager.getINSTANCE().getProject().getvProject().getErrorMessage();
         for (HBox label : lb) {
             label.setStyle(Constants.borderStyle4);
+            label.setOnMouseEntered(e->{
+                lab.setMessage(false,"");
+            });
+            label.setOnMouseExited(e->{
+                lab.setMessage(false,"");
+            });
         }
     }
 
@@ -144,6 +159,7 @@ public class ViewItem<T extends Node> implements Main.Observabler{
         name.setText(item.getName() == null?item.getType().toString():item.getName());
         data.setText(item.getData()==null?"":item.getData().toString());
         unit.setText(item.getUnit()==null?"":item.getUnit());
+        setGe(item.isCorrect());
     }
 
     @Override
