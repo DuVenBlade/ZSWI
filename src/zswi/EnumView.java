@@ -89,7 +89,7 @@ public class EnumView implements Main.Observabler {
         ContextMenu contextMenu = new ContextMenu();
 
         MenuItem addItem = new MenuItem("Přidat SubEnum");
-        addItem.setOnAction(event -> addSubEnum(AlertManager.getName("Název: ", ""),listEnumView.getSelectionModel().getSelectedItem()));
+        //addItem.setOnAction(event -> addSubEnum(AlertManager.getName("Název: ", ""),listEnumView.getSelectionModel().getSelectedItem()));
         MenuItem editItem = new MenuItem("Upravit");
         editItem.setOnAction(event -> editEnum(cell));
         MenuItem deleteItem = new MenuItem("Smazat");
@@ -113,7 +113,16 @@ public class EnumView implements Main.Observabler {
         selectedItem.addEnumValue(ownEnum);
         listEnumView.getItems().add(ownEnum);
     }
-
+    private void addEnumSection(String name){
+        EnumSection tmp = listEnumView.getSelectionModel().getSelectedItem();
+        if (tmp == null) {
+            AlertManager.info("Nebyl vybrán žádný Výčtový typ.");
+        } else if (name.isEmpty()) {
+            AlertManager.info("Název výčtového typu je příliš krátký.");
+        } else {
+           //eManager.addEnumSection(new EnumSection());
+        }
+    }
     private void editEnum(ListCell<EnumSection> cell) {
         EnumSection item = cell.getItem();
         item.setName(AlertManager.getName("Nový název: ", item.getName()));
@@ -132,7 +141,7 @@ public class EnumView implements Main.Observabler {
         TextField textField = new TextField();
         //textField
         Button button = new Button("Přidat Enum");
-        button.setOnAction(event -> addEnum(textField.getText()));
+        //button.setOnAction(event -> addEnum(textField.getText()));
 
         hBox.getChildren().addAll(textField);
         hBox.getChildren().addAll(button);
@@ -185,23 +194,6 @@ public class EnumView implements Main.Observabler {
         return contextMenu;
     }
 
-    private void addSubEnum(String name, EnumSection sec) {
-        EnumSection tmp = listEnumView.getSelectionModel().getSelectedItem();
-        if (tmp == null) {
-            AlertManager.info("Nebyl vybrán žádný Výčtový typ.");
-        } else if (name.isEmpty()) {
-            AlertManager.info("Název výčtového typu je příliš krátký.");
-        } else {
-            ProjectManager temp = ProjectManager.getINSTANCE();
-            EnumValues ownSubEnum = new EnumValues(tmp.getIncrement(), new Name(temp.getProject().getLanguage(), name));
-
-            temp.getEnumManager().getIDEnum(
-                    listEnumView.getSelectionModel().getSelectedItem().getID())
-                    .addSubEnum(ownSubEnum);
-            listSubEnumView.getItems().add(ownSubEnum);
-        }
-    }
-
     private void editSubEnum(ListCell<EnumValues> cell) {
         EnumValues item = cell.getItem();
         item.setName(AlertManager.getName("Nový název: ", item.getName()));
@@ -218,7 +210,7 @@ public class EnumView implements Main.Observabler {
         HBox hBox = new HBox();
         TextField textField = new TextField();
         Button button = new Button("Přidat SubEnum");
-        button.setOnAction(event -> addSubEnum(textField.getText()));
+        //button.setOnAction(event -> addSubEnum(textField.getText()));
 
         hBox.getChildren().addAll(textField);
         hBox.getChildren().addAll(button);
