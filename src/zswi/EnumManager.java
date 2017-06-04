@@ -83,7 +83,10 @@ public class EnumManager extends ASaveable {
         public void removeEnumValue(EnumValues ownSubEnum) {
             EnumValues.remove(ownSubEnum);
         }
-
+        @Override
+        public void translate(LanguageManager langManager, int from, int to) {
+            langManager.translate(this, from, to);
+        }
     }
 
     public static class EnumValues  extends AFlowable{
