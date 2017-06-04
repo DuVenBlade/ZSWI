@@ -1,6 +1,7 @@
 package zswi;
 
 
+import java.util.Arrays;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -27,22 +28,12 @@ public class ViewItem implements Main.Observabler{
         unit = initUnit();
         setGeNormal(name,this.data,unit);
     }
-    public static ViewItem createBitBoolView(final Item item, boolean bool){
-        Cell txn = new Cell<OBitBoolPicker>(new OBitBoolPicker(bool)){
+    public static ViewItem createBitBoEnView(final Item item,Object... array){
+        Cell txn = new Cell<OPicker>(new OPicker(array)){
             @Override
             public void commitEdit() {
                 super.commitEdit();
-                //SetValue
-            }
-        };
-        return new ViewItem(item,txn);
-    }
-    public static ViewItem createEnumView(final Item item){
-        Cell txn = new Cell<OEnumPicker>(new OEnumPicker()){
-            @Override
-            public void commitEdit() {
-                super.commitEdit();
-                //SetValue
+                ItemManager.getINSTANCE().setData(this.getItem().getValue(), item);
             }
         };
         return new ViewItem(item,txn);
@@ -52,7 +43,7 @@ public class ViewItem implements Main.Observabler{
             @Override
             public void commitEdit() {
                 super.commitEdit();
-                item.setControlData(this.getItem().getText());
+                ItemManager.getINSTANCE().setData(this.getItem().getText(), item);
             }
         };
         return new ViewItem(item,txn);
@@ -63,7 +54,7 @@ public class ViewItem implements Main.Observabler{
             @Override
             public void commitEdit() {
                 super.commitEdit();
-                //SetValue
+                 ItemManager.getINSTANCE().setData(this.getItem().getValue(),item);
             }
         };
         return new ViewItem(item,txn);
@@ -74,8 +65,7 @@ public class ViewItem implements Main.Observabler{
             @Override
             public void commitEdit() {
                 super.commitEdit();
-                Item_DaTi value = (Item_DaTi)item.getValue();
-                
+                ItemManager.getINSTANCE().setData(this.getItem().getValue(),item);
             }
         };
         return new ViewItem(item,txn);
@@ -95,8 +85,15 @@ public class ViewItem implements Main.Observabler{
              @Override
             public void commitEdit() {
                 super.commitEdit();
-                item.setUnit(this.getItem().getText());
+               
             }
+
+            @Override
+            public void startEdit() {
+                if(item.haveUnit())
+                super.startEdit(); 
+            }
+            
         };
         return txn;
     }
@@ -129,7 +126,7 @@ public class ViewItem implements Main.Observabler{
     }
     
     public void setGeErr(HBox ... lb){
-        ErrorLabel lab = ProjectManager.getINSTANCE().getProject().getvProject().getErrorMessage();
+        ErrorLabel lab = Project.getInstance().getvProject().getErrorMessage();
         for (HBox label : lb) {
             label.setStyle(Constants.borderStyle6);
             label.setOnMouseEntered(e->{
@@ -142,7 +139,7 @@ public class ViewItem implements Main.Observabler{
         
     }
     public void setGeNormal(HBox ... lb){
-        ErrorLabel lab = ProjectManager.getINSTANCE().getProject().getvProject().getErrorMessage();
+        ErrorLabel lab = Project.getInstance().getvProject().getErrorMessage();
         for (HBox label : lb) {
             label.setStyle(Constants.borderStyle4);
             label.setOnMouseEntered(e->{
@@ -156,9 +153,9 @@ public class ViewItem implements Main.Observabler{
 
     @Override
     public void notificate() {
-        name.setText(item.getName() == null?item.getType().toString():item.getName());
-        data.setText(item.getData()==null?"":item.getData().toString());
-        unit.setText(item.getUnit()==null?"":item.getUnit());
+        name.setText(item.toString());
+        data.setText(item.getStringValue());
+        unit.setText(item.haveUnit()?"":"");
         setGe(item.isCorrect());
     }
 

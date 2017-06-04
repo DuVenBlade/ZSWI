@@ -77,15 +77,12 @@ public class ViewPanel implements Main.Observabler {
         for (Table table : panel.getListTables()) {
             vBox.getChildren().add(table.getvTable().getView());
         }view.setContent(vBox);
+         panelLabel.setText(panel.getName());
     }
 
     @Override
     public BorderPane getView() {
         return pane;
-    }
-
-    void setName(String name) {
-        panelLabel.setText(name);
     }
 
 }

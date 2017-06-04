@@ -1,74 +1,40 @@
 package zswi;
 
 import java.math.BigInteger;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 /**
  *
  * @author DDvory
  */
-public class Item extends AFlowable implements IUpdatable{
+public abstract class Item extends AFlowable implements IUpdatable{
     private BigInteger adress;
     private ItemManager.DataType  type;
-    private ViewItem vItem;
-    private boolean showUnit;
+    protected ViewItem vItem;
+    private boolean haveUnit;
     ///////////////////////
     private String correctMessage;
     /////////////////////////////
-    private IValuable value;
-    private String unit;
 
-    public Item(String adress, String type, String showUnit, IValuable value) {
-        init(adress, type, showUnit,value);
+    public Item(BigInteger adress,AFlowable parent, ItemManager.DataType type,  boolean haveUnit) {
+        super(type.toString(),parent);
+        init(adress, type, haveUnit);
     }
 
-    public Item(BigInteger adress, ItemManager.DataType type,  boolean showUnit, IValuable value) {
-        init(adress, type, showUnit, value);
-    }
-    
-    private void init(String adress, String type, String showUnit, IValuable value){
-        init(ItemManager.getINSTANCE().getAdress(adress),ItemManager.DataType.fromString(type), Boolean.valueOf(showUnit), value);
-    }
-    private void init(BigInteger adress,ItemManager.DataType type, boolean showUnit, IValuable value){
+    private void init(BigInteger adress,ItemManager.DataType type, boolean haveUnit){
         this.adress = adress;
         this.type = type;
-        this.showUnit = showUnit;
-        super.setName(type.toString());
-        value.setItem(this);
-        createView();
+        this.haveUnit = haveUnit;
     }
-    private void createView(){
-        switch(this.getType()){
-            case DOUBLE:
-            case FLOAT:     
-            case INT:
-            case STRING:
-                vItem = ViewItem.createTextFieldView(this);
-                break;
-            case ENUM:
-            	vItem = ViewItem.createEnumView(this);
-                break;
-            case TIME:
-                 vItem = ViewItem.createTimePickerView(this);
-                break;
-            case DATE:
-              vItem = ViewItem.createDatePickerView(this);
-              	break;
-            case BOOLEAN:
-            	vItem = ViewItem.createBitBoolView(this, true);
-              	break;
-            case BIT:
-            	vItem = ViewItem.createBitBoolView(this, false);
-            	break;
-        }
-        if(this.getType()==null){
-            vItem = ViewItem.createTextFieldView(this);
-            vItem.notificate();
-        }
+    protected void createView(){
+        updateAll();
     }
     
     public void correction(boolean bool, String message){
         setIsCorrect(bool);
         correctMessage = message;
+        super.correction(bool);
     }
 
     public BigInteger getAdress() {
@@ -91,15 +57,8 @@ public class Item extends AFlowable implements IUpdatable{
         this.type = type;
     }
 
-    public Object getData() {
-        return value;
-    }
     public void updateValue(Object obj){
         
-    }
-
-    public IValuable getValue() {
-        return value;
     }
 
     @Override
@@ -108,21 +67,8 @@ public class Item extends AFlowable implements IUpdatable{
         vItem.notificate();
     }
 
-    public boolean isShowUnit() {
-        return showUnit;
-    }
-
-    public String getUnit() {
-        return unit;
-    }
-
-    public void setUnit(String unit) {
-        this.unit = unit;
-        vItem.notificate();
-    }
-
-    public void setControlData(String str){
-        ItemManager.getINSTANCE().setData(str, this);
+    public boolean haveUnit() {
+        return haveUnit;
     }
 
     public ViewItem getvItem() {
@@ -138,5 +84,16 @@ public class Item extends AFlowable implements IUpdatable{
     public void updateAll() {
         this.vItem.notificate();
     }
+
+    @Override
+    public Element createElementToSave(Document document) {
+        Element element = super.createElementToSave(document);
+        element.setAttribute(Constants.adress, adress+"");
+        element.setAttribute(Constants.dataType, type+"");
+        element.setAttribute(Constants.haveUnit, haveUnit+"");
+        return element;
+    }
+    
+    public abstract String getStringValue();
     
 }

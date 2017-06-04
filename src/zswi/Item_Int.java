@@ -1,32 +1,36 @@
 package zswi;
 
 import java.math.BigInteger;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 /**
  *
  * @author DDvory
  */
-public class Item_Int implements IValuable {
+public class Item_Int extends Item {
     public static final Integer[]  lens = new Integer[]{1,2,4,8};
     
     private BigInteger value;
     private Format format;
     private int len;
     //Metric -> bude mozno az posle kolega ty picoviny
-    private Item item;
 
-    public Item_Int(String value, Format format, int len) {
-        setValue(value);
+
+    public Item_Int(Format format, Integer len, BigInteger adress,AFlowable parent, ItemManager.DataType type, boolean showUnit) {
+        super(adress,parent, type, showUnit);
+        init(new BigInteger("0"), format, len);
+    }
+
+    public Item_Int(BigInteger value, Format format, int len,  BigInteger adress,AFlowable parent, ItemManager.DataType type, boolean showUnit) {
+        super(adress,parent, type, showUnit);
+        init(value, format, len);
+    }
+    public void init(BigInteger value, Format format, int len){
+        this.value = value;
         this.format = format;
         this.len = len;
-    }
-
-    public Item_Int(Format format, int len) {
-        this("0",format,len);
-    }
-
-    public Item_Int() {
-        this(Format.Signed,1);
+        createView();
     }
 
     public BigInteger getValue() {
@@ -42,11 +46,12 @@ public class Item_Int implements IValuable {
     }
 
     public void setValue(String value) {
-        this.value = new BigInteger(value);
+        setValue(new BigInteger(value));
     }
 
     public void setValue(BigInteger value) {
         this.value = value;
+        updateAll();
     }
     
     public void setFormat(Format format) {
@@ -58,15 +63,24 @@ public class Item_Int implements IValuable {
     }
 
     @Override
-    public String toString() {
-        return value.toString();
+    protected void createView() {
+        vItem = ViewItem.createTextFieldView(this);
+        super.createView();
     }
 
     @Override
-    public void setItem(Item item) {
-        this.item = item;
+    public String getStringValue() {
+       return value+"";
     }
-    
+
+    @Override
+    public Element createElementToSave(Document document) {
+        Element element = super.createElementToSave(document);
+        element.setAttribute(Constants.len, len+"");
+        element.setAttribute(Constants.format, format.toString());
+        element.setAttribute(Constants.value, value+"");
+        return element;
+    }
     
     public enum Format{
         Signed,Unsigned

@@ -72,7 +72,7 @@ public class LanguageManager extends WebWorker {
     public void onLoadingPage(int data) {
     }
 
-    public static class Language {
+    public static class Language extends ASaveable {
         final int id;
         final String iso;
         final String name;
@@ -100,6 +100,13 @@ public class LanguageManager extends WebWorker {
             return name;
         }
 
+        @Override
+        public Element createElementToSave(Document document) {
+            Element element = super.createElementToSave(document);
+            element.setAttribute(Constants.id, id+"");
+            return element;
+        }
+        
     }
 
     private class ToTranslate {
@@ -153,7 +160,7 @@ public class LanguageManager extends WebWorker {
                 pause();
             }
             if (get != null) {
-                ProjectManager.getINSTANCE().changeLanguage(get.to.id);
+                ProjectManager.changeLanguage(get.to.id);
             }
             isRunning = false;
         }

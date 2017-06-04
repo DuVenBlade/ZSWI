@@ -5,6 +5,8 @@ import java.util.Observable;
 import java.util.Observer;
 import javafx.scene.control.TextField;
 import javafx.scene.text.Font;
+import zswi.Project;
+import zswi.ProjectManager;
 
 /**
  *
@@ -18,8 +20,9 @@ public class OTextField extends TextField implements Observer{
 
     public OTextField(String string) {
         super(string);
-        FontSize.getINSTANCE().addObserver(this);
-        setFontSize(FontSize.getSize());
+        FontSize size = ProjectManager.getFont();
+        size.addObserver(this);
+        setFontSize(size.getSize());
     }
     
     @Override

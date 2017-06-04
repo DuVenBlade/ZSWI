@@ -3,31 +3,40 @@ package zswi;
 
 import java.util.ArrayList;
 import java.util.List;
-import javafx.scene.control.Alert;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import zswi.FontSizeObervers.FontSize;
 import zswi.LanguageManager.Language;
 
 public class Project extends Window {
-    
+    private static Project Instance;
+    private EnumManager eManager;
     private ViewProject vProject;
     private int language;
     private String name;
     private List<Language> listLanguages;
-
-    //bottom language + pisma
-    public Project(String name, List<Window> window, Panel panel, String language, List<Language> listLanguages) {
-        super(name,null ,window, panel);
-        init( Integer.decode(language),listLanguages);
+    //---------------------------------------------------
+    public static Project createProject(int language,String name, List<Language> list,EnumManager eManager) {
+        ProjectManager.createFontSize();
+        Instance = new Project(language, name, list,eManager);
+        return Instance;
     }
 
-    public Project(int language, String name, List<Window> windows, Panel panel, List<Language> listLanguages) {
-        super(name,null, windows, panel);
-        init(language,listLanguages);
+    public static Project getInstance() {
+        return Instance;
+    }
+    //----------------------------------------------------------------------------
+    private Project(int language,String name,  List<Language> listLanguages,EnumManager eManager) {
+        super(null);
+        init(language,listLanguages,name,eManager);
     }
 
-    private void init(int language, List<Language> listLanguages) {
-        FontSize.getINSTANCE().setSize(12);
+    private void init(int language, List<Language> listLanguages,String name, EnumManager eManager) {
+        this.name= name;
         this.language = language;
+        if(eManager==null){
+            this.eManager = new EnumManager();
+        }
         if(listLanguages==null){
             this.listLanguages = new ArrayList<>();
             this.listLanguages.add(LanguageManager.getListLanguages().get(language));
@@ -35,7 +44,11 @@ public class Project extends Window {
         vProject = new ViewProject(this);
         vProject.updateLanguage();
     }
-
+    
+    public EnumManager getEManager() {
+        return eManager;
+    }
+    
     public int getLanguage() {
         return language;
     }
@@ -56,6 +69,13 @@ public class Project extends Window {
     public List<Language> getListLanguages() {
         return listLanguages;
     }
+
+    @Override
+    public void correction(boolean bool) {
+       this.isCorrect = bool;
+       this.updateAll();
+    }
+    
     
     @Override
     public void setName(String name) {
@@ -85,7 +105,7 @@ public class Project extends Window {
     public void addLanguage(Language lang){
         if(lang==null)return;
         listLanguages.add(lang);
-        translate(ProjectManager.getINSTANCE().getLanguageManager(), language, lang.id);
+        translate(ProjectManager.getLanguageManager(), language, lang.id);
         vProject.updateLanguage();
     }
     public void removeLanguage() {
@@ -105,5 +125,17 @@ public class Project extends Window {
         vProject.notificate();
         super.updateAll();
     }
+
+    @Override
+    public Element createElementToSave(Document document) {
+        Element element = super.createElementToSave(document);
+        element.setAttribute(Constants.name, name);
+        element.setAttribute(Constants.language, language+"");
+        for (Language listLanguage : listLanguages) {
+            element.appendChild(listLanguage.createElementToSave(document));
+        }
+        return element;
+    }
+    
     
 }

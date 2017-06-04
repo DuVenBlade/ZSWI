@@ -1,10 +1,12 @@
 package zswi;
 
+import java.io.File;
 import java.util.Optional;
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.image.Image;
+import zswi.FontSizeObervers.FontSize;
 import zswi.res.ResManager;
 
 /**
@@ -26,52 +28,47 @@ public class ProjectManager {
 
     }
     
-    private static ProjectManager INSTANCE;
 
-    private Project project;
-    private EnumManager emanager;
-    private String fileName;
-    private LanguageManager languageManager;
+    private static FontSize font;
+    private File fileName;
+    
+    private static LanguageManager languageManager;
+    static{
+        languageManager = new LanguageManager();
+    }
     static Image[] getArrayImages() {
         return statusImages;
     }
-    
-    private ProjectManager(Project project) {
-        languageManager = new LanguageManager();
-        this.project = project;
-        emanager = new EnumManager();
-        this.project.getvProject().notificate();
-        
-    }
-    public void setTitle(String text){
-        Main.getINSTANCE().getStage().setTitle(text);
-    }
 
-    public static ProjectManager createProject() {
 
+    public static void createProject() {
         if (checkProject()) {
             Project project = AlertManager.Project();
-            if (project != null) {
-                INSTANCE = new ProjectManager(project);
-            }
         }
-        return INSTANCE;
     }
 
     public static void closeProject() {
-        if (INSTANCE != null);//ZEPTA SE NA SAVE  A UZAVRE SE
+        if (Project.getInstance() != null){
+            if(AlertManager.confirm("Chete projekt před uzavřením uložit?")){
+                saveProejct();
+            }
+        }
+    }
+    public static void saveProejct(){
+        if (Project.getInstance() != null){
+            mod_FileManager.save(Project.getInstance());
+        }
     }
 
-    public static ProjectManager loadProject() {
-        boolean bool = false;
+    public static void loadProject() {
         if (checkProject()) {
-            //Otevre adresar 
+            closeProject();
+            mod_XmlManager.ReadXML("C:\\Users\\DDvory\\Desktop\\test.xml");
         }
-        return null;
     }
     
     private static boolean checkProject() {
-        if (INSTANCE != null) {
+        if (Project.getInstance() != null) {
             if (AlertManager.confirm("Máte již načtený jiný projekt, chcete opravdu tento projekt zavřít?")) {
                 closeProject();
                 return true;
@@ -80,26 +77,23 @@ public class ProjectManager {
         return true;
     }
 
-    public LanguageManager getLanguageManager() {
+    public static LanguageManager getLanguageManager() {
         return languageManager;
     }
     
-    public EnumManager getEnumManager() {
-        return emanager;
+    
+    public static FontSize getFont() {
+        return font;
     }
-    public static ProjectManager getINSTANCE() {
-        return INSTANCE;
-    }
-
-    public Project getProject() {
-        return project;
+    public static void createFontSize(){
+        font = new FontSize(12);
     }
 
-    void changeLanguage(int id) {
-        project.setLanguage(id);
+    public static void changeLanguage(int id) {
+        Project instance = Project.getInstance();
+        instance.setLanguage(id);
         Platform.runLater(()->{
-            project.updateAll();
+            instance.updateAll();
         });
     }
-
 }

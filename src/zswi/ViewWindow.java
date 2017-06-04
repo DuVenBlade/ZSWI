@@ -3,6 +3,7 @@ package zswi;
 
 import zswi.FontSizeObervers.OLabel;
 import java.util.List;
+import javafx.collections.ObservableList;
 import javafx.scene.control.Label;
 import javafx.scene.control.TreeItem;
 import javafx.scene.image.ImageView;
@@ -38,11 +39,11 @@ public class ViewWindow implements Main.Observabler {
 
     public void updateStatusImage() {
         int i = 2;
-        if (window == null||window.getPanel()==null) {
-            i = 1;
-        } else if (!window.getPanel().isStatus()) {
+        if(!window.isCorrect()){
             i = 0;
-        }
+        }else if (window == null||window.getPanel()==null) {
+            i = 1;
+        } 
         statusCircle.setImage(ViewProject.getStatusImage(i));
     }
 
@@ -85,13 +86,20 @@ public class ViewWindow implements Main.Observabler {
         treeLabel.setText(window.getName());
         Panel panel = window.getPanel();
         if(panel!=null)
-        panel.getvPanel().setName(window.getName());
+        panel.setName(window.getName());
         this.updateStatusImage();
     }
 
     public void add(ViewWindow wind) {
         windows.getChildren().add(wind.getWindows());
         windows.setExpanded(true);
+    }
+    public void setListWindows(List<Window> list){
+        ObservableList<TreeItem<ViewWindow>> children = windows.getChildren();
+        children.clear();
+        for (Window window1 : list) {
+            children.add(window1.getvWindow().windows);
+        }
     }
 
     @Override

@@ -12,16 +12,21 @@ public class Constants {
     public static final String Item = "Item";
     public static final String Table = "Table";
     public static final String Panel = "Panel";
-    public static final String language = "Language";
+    public static final String Language = "Language";
+    public static final String Name = "Name";
     ///////////////////////////////////////////////
+    public static final String font ="font";
+    public static final String haveUnit ="haveUnit";
+    public static final String adress = "adress";
     public static final String name = "name";
     public static final String value = "value";
-    public static final String load = "load";
+    public static final String len = "len";
     public static final String id = "id";
+    public static final String language = "language";
     public static final String columns = "columns";
     public static final String dataType = "dataType";
     public static final String meter = "meter";
-    public static final String fontSize = "fontSize";
+    public static final String format = "format";
     //////////////////////////////////////////////////
     public final static String borderStyle1 = "-fx-padding: 4;"
             + "-fx-border-width: 0;"
