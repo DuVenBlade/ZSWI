@@ -3,96 +3,56 @@ package zswi;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
-public class EnumManager {
+public class EnumManager extends ASaveable {
 
-    private Map<BigInteger, OwnEnum> enums;
     private EnumView vEnum;
-    private Increment increment;
+    private Increment enumIncrement;
+    private List<EnumSection> list;
+    private Map<BigInteger, EnumValues> mapValues;
+
     public EnumManager() {
-        enums = (Map<BigInteger, OwnEnum>) new Hashtable();
+        mapValues = (Map<BigInteger, EnumValues>) new Hashtable();
         vEnum = new EnumView(this);
-        increment = new Increment();
+        enumIncrement = new Increment();
     }
 
-    public List<OwnEnum> getEnums() {
-        List<OwnEnum> temp = new ArrayList<>();
-        Set<BigInteger> set = enums.keySet();
-        Iterator<BigInteger> iterator = set.iterator();
-        BigInteger tmp;
-        while (iterator.hasNext()) {
-            tmp = iterator.next();
-            if (!enums.get(tmp).getSubEnums().isEmpty()) {
-                temp.add(enums.get(tmp));
-            }
+    public List<EnumSection> getNotEmptyEnums() {
+        List<EnumSection> temp = new ArrayList<>();
+        for (EnumSection enumSection : list) {
+            if(!enumSection.getEnumValueList().isEmpty())
+                temp.add(enumSection);
         }
         return temp;
     }
     
-    public List<OwnEnum> getAllEnums() {
-        List<OwnEnum> temp = new ArrayList<>();
-        Set<BigInteger> set = enums.keySet();
-        Iterator<BigInteger> iterator = set.iterator();
-        BigInteger tmp;
-        while (iterator.hasNext()) {
-            tmp = iterator.next();
-            temp.add(enums.get(tmp));
-        }
-        return temp;
+    public List<EnumSection> getEnumList() {
+        return list;
     }
 
-    public Map<BigInteger, OwnEnum> getEnumMap() {
-        return enums;
+    public Map<BigInteger, EnumValues> getEnumMap() {
+        return mapValues;
     }
 
-    public void addEnum(OwnEnum ownEnum) {
-        enums.put(ownEnum.getID(), ownEnum);
+    public void addEnumSection(EnumSection ownEnum) {
+        list.add(ownEnum);
     }
 
-    public void removeEnum(OwnEnum ownEnum) {
-        enums.remove(ownEnum.getID());
+    public void removeEnumSection(EnumSection ownEnum) {
+        list.remove(ownEnum);
     }
 
-    public String getIDName(BigInteger id) {
-        return enums.get(id).getName();
+    public String getName(BigInteger id) {
+        return mapValues.get(id).getName();
     }
 
-    public String getSubIDName(BigInteger id, BigInteger subId) {
-        return enums.get(id).getSubEnumMap().get(subId).getName();
+    public EnumSection getSection(BigInteger id) {
+        return (EnumSection)mapValues.get(id).getParent();
     }
-
-    public OwnEnum getIDEnum(BigInteger id) {
-        return enums.get(id);
-    }
-
-    public OwnSubEnum getSubIDSubEnum(BigInteger id, BigInteger subId) {
-        return enums.get(id).getSubEnumMap().get(subId);
-    }
-
-    /*
-	 * 8 byte nebo 8 bit?
-     */
-    public static BigInteger getAdress(String data) {
-        BigInteger adress = null;
-        try {
-            adress = new BigInteger(data);
-            byte[] arr = adress.toByteArray();
-            if (arr.length > 2 || (arr.length == 2 && arr[0] != 0)) {
-                adress = null;
-            } else if (adress.signum() == -1) {
-                adress = null;
-            }
-        } catch (Exception e) {
-        }
-        return adress;
-    }
-
     public Increment getIncrement() {
-        return increment;
+        return enumIncrement;
     }
 
     public EnumView getvEnum() {
@@ -100,67 +60,43 @@ public class EnumManager {
     }
     
 
-    public static class OwnEnum extends OwnSubEnum {
+    public static class EnumSection extends EnumValues {
 
-        private Map<BigInteger, OwnSubEnum> subEnums;
-        private Increment increment;
-        public OwnEnum(String id, Name name) {
-            super(id, name);
-            subEnums = (Map<BigInteger, OwnSubEnum>) new Hashtable();
-            increment = new Increment();
+        private List<EnumValues> EnumValues;
+        public EnumSection(String id, String name) {
+            super(id, name,null);
         }
 
-        public OwnEnum(Increment increment,Name name) {
-            this(increment.increment()+"",name);
+        public EnumSection(int id,String name) {
+            this(id+"",name);
         }
 
-        public Increment getIncrement() {
-            return increment;
+        public List<EnumValues> getEnumValueList() {
+            return EnumValues;
         }
-        public List<OwnSubEnum> getSubEnums() {
-            List<OwnSubEnum> temp = new ArrayList<OwnSubEnum>();
-            Set<BigInteger> set = subEnums.keySet();
-            Iterator<BigInteger> iterator = set.iterator();
-            BigInteger tmp;
-            while (iterator.hasNext()) {
-                tmp = iterator.next();
-                temp.add(subEnums.get(tmp));
-            }
-            return temp;
-        }
-        public OwnSubEnum getSubEnum(BigInteger integer){
-            return subEnums.get(integer);
+        
+
+        public void addEnumValue(EnumValues enumValue) {
+            EnumValues.add(enumValue);
         }
 
-        public Map<BigInteger, OwnSubEnum> getSubEnumMap() {
-            return subEnums;
-        }
-
-        public void addSubEnum(OwnSubEnum ownSubEnum) {
-            subEnums.put(ownSubEnum.getID(), ownSubEnum);
-        }
-
-        public void removeSubEnum(OwnSubEnum ownSubEnum) {
-            subEnums.remove(ownSubEnum.getID());
+        public void removeEnumValue(EnumValues ownSubEnum) {
+            EnumValues.remove(ownSubEnum);
         }
 
     }
 
-    public static class OwnSubEnum  extends AFlowable{
+    public static class EnumValues  extends AFlowable{
 
         private BigInteger id;
 
-        public OwnSubEnum(String id, Name name) {
-            this(new BigInteger(id), name);
+        public EnumValues(String id, String name, AFlowable parent) {
+            this(new BigInteger(id), name,parent);
         }
 
-        public OwnSubEnum(BigInteger id, Name name) {
+        public EnumValues(BigInteger id, String name, AFlowable parent) {
+            super(name,parent);
             this.id = id;
-            this.setName(name);
-        }
-
-        public OwnSubEnum(Increment incr,Name name) {
-            this(incr.increment()+"",name);
         }
 
         public BigInteger getID() {
@@ -169,7 +105,7 @@ public class EnumManager {
 
         @Override
         public void translate(LanguageManager langManager, int from, int to) {
-            ProjectManager.getINSTANCE().getLanguageManager().translate(this, from, to);
+            langManager.translate(this, from, to);
         }
         
     }

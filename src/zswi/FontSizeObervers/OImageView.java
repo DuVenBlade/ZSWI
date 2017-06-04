@@ -3,6 +3,8 @@ package zswi.FontSizeObervers;
 import java.util.Observable;
 import java.util.Observer;
 import javafx.scene.image.ImageView;
+import zswi.Project;
+import zswi.ProjectManager;
 
 /**
  *
@@ -12,8 +14,9 @@ public class OImageView extends ImageView implements Observer{
     
     public OImageView() {
         super();
-        FontSize.getINSTANCE().addObserver(this);
-        setFontSize(FontSize.getSize());
+        FontSize size = ProjectManager.getFont();
+        size.addObserver(this);
+        setFontSize(size.getSize());
     }
 
     @Override

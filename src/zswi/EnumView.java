@@ -1,10 +1,11 @@
 package zswi;
 
-import zswi.EnumManager.OwnEnum;
-import zswi.EnumManager.OwnSubEnum;
+import zswi.EnumManager.EnumSection;
+import zswi.EnumManager.EnumValues;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContextMenu;
@@ -17,11 +18,11 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 
 public class EnumView implements Main.Observabler {
-    
+
     private EnumManager eManager;
     private BorderPane viewPane;
-    private ListView<OwnEnum> listEnumView;
-    private ListView<OwnSubEnum> listSubEnumView;
+    private ListView<EnumSection> listEnumView;
+    private ListView<EnumValues> listSubEnumView;
 
     public EnumView(EnumManager eManager) {
         viewPane = new BorderPane();
@@ -46,16 +47,16 @@ public class EnumView implements Main.Observabler {
     private Node createEnumListView() {
         listEnumView = new ListView<>();
 
-        listEnumView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<OwnEnum>() {
+        listEnumView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<EnumSection>() {
 
             @Override
-            public void changed(ObservableValue<? extends OwnEnum> observable, OwnEnum oldValue, OwnEnum newValue) {
+            public void changed(ObservableValue<? extends EnumSection> observable, EnumSection oldValue, EnumSection newValue) {
                 changeSubEnumList(newValue);
             }
         });
 
         listEnumView.setCellFactory(lv -> {
-            ListCell<OwnEnum> cell = new ListCell<OwnEnum>();
+            ListCell<EnumSection> cell = new ListCell<EnumSection>();
             ContextMenu contextMenu = createEnumContextMenu(cell);
 
             cell.emptyProperty().addListener((obs, wasEmpty, isNowEmpty) -> {
@@ -75,23 +76,20 @@ public class EnumView implements Main.Observabler {
         return listEnumView;
     }
 
-    private void changeSubEnumList(OwnEnum ownEnum) {
-        OwnEnum temp = listEnumView.getSelectionModel().getSelectedItem();
-        if (temp != null) {
+    private void changeSubEnumList(EnumSection ownEnum) {
+        if (ownEnum != null) {
             listSubEnumView.getItems().clear();
-            listSubEnumView.getItems().addAll(
-                    ProjectManager.getINSTANCE().getEnumManager().getIDEnum(
-                            temp.getID()).getSubEnums());
+            listSubEnumView.getItems().addAll(FXCollections.observableArrayList(ownEnum.getEnumValueList()));
         } else {
             listSubEnumView.getItems().clear();
         }
     }
 
-    private ContextMenu createEnumContextMenu(ListCell<OwnEnum> cell) {
+    private ContextMenu createEnumContextMenu(ListCell<EnumSection> cell) {
         ContextMenu contextMenu = new ContextMenu();
 
         MenuItem addItem = new MenuItem("Přidat SubEnum");
-        addItem.setOnAction(event -> addSubEnum(AlertManager.getName("Název: ", "")));
+        addItem.setOnAction(event -> addSubEnum(AlertManager.getName("Název: ", ""),listEnumView.getSelectionModel().getSelectedItem()));
         MenuItem editItem = new MenuItem("Upravit");
         editItem.setOnAction(event -> editEnum(cell));
         MenuItem deleteItem = new MenuItem("Smazat");
@@ -101,26 +99,30 @@ public class EnumView implements Main.Observabler {
         return contextMenu;
     }
 
-    private void addEnum(String name) {
-        if (name.isEmpty()) {
-            AlertManager.info("Název výčtového typu je příliš krátký.");
-        } else {
-             ProjectManager temp = ProjectManager.getINSTANCE();
-            OwnEnum ownEnum = new OwnEnum(eManager.getIncrement(), new Name(temp.getProject().getLanguage(), name));
-            eManager.addEnum(ownEnum);
-            listEnumView.getItems().add(ownEnum);
+    private void addEnumValue(String name) {
+        if(name.isEmpty()){
+            AlertManager.info("Název je pžíliš krátký");
+            return;
         }
+        EnumSection selectedItem = listEnumView.getSelectionModel().getSelectedItem();
+        if(selectedItem==null){
+            AlertManager.info("Nebyla vybrána sekce výčtového typu");
+            return;
+        }
+        EnumSection ownEnum = new EnumSection(eManager.getIncrement().increment(), name);
+        selectedItem.addEnumValue(ownEnum);
+        listEnumView.getItems().add(ownEnum);
     }
 
-    private void editEnum(ListCell<OwnEnum> cell) {
-        OwnEnum item = cell.getItem();
+    private void editEnum(ListCell<EnumSection> cell) {
+        EnumSection item = cell.getItem();
         item.setName(AlertManager.getName("Nový název: ", item.getName()));
         cell.textProperty().bind(Bindings.format("%s", cell.itemProperty()));
     }
 
-    private void deleteEnum(OwnEnum item) {
+    private void deleteEnum(EnumSection item) {
         if (AlertManager.confirm("Opravdu chcete smazat tento item? " + item.toString())) {
-            ProjectManager.getINSTANCE().getEnumManager().removeEnum(item);
+            eManager.removeEnumSection(item);
             listEnumView.getItems().remove(item);
         }
     }
@@ -151,7 +153,7 @@ public class EnumView implements Main.Observabler {
         listSubEnumView = new ListView<>();
 
         listSubEnumView.setCellFactory(lv -> {
-            ListCell<OwnSubEnum> cell = new ListCell<OwnSubEnum>();
+            ListCell<EnumValues> cell = new ListCell<EnumValues>();
             ContextMenu contextMenu = createSubEnumContextMenu(cell);
 
             cell.emptyProperty().addListener((obs, wasEmpty, isNowEmpty) -> {
@@ -171,7 +173,7 @@ public class EnumView implements Main.Observabler {
         return listSubEnumView;
     }
 
-    private ContextMenu createSubEnumContextMenu(ListCell<OwnSubEnum> cell) {
+    private ContextMenu createSubEnumContextMenu(ListCell<EnumValues> cell) {
         ContextMenu contextMenu = new ContextMenu();
 
         MenuItem editItem = new MenuItem("Upravit");
@@ -183,15 +185,15 @@ public class EnumView implements Main.Observabler {
         return contextMenu;
     }
 
-    private void addSubEnum(String name) {
-        OwnEnum tmp = listEnumView.getSelectionModel().getSelectedItem();
+    private void addSubEnum(String name, EnumSection sec) {
+        EnumSection tmp = listEnumView.getSelectionModel().getSelectedItem();
         if (tmp == null) {
             AlertManager.info("Nebyl vybrán žádný Výčtový typ.");
         } else if (name.isEmpty()) {
             AlertManager.info("Název výčtového typu je příliš krátký.");
         } else {
             ProjectManager temp = ProjectManager.getINSTANCE();
-            OwnSubEnum ownSubEnum = new OwnSubEnum(tmp.getIncrement(), new Name(temp.getProject().getLanguage(), name));
+            EnumValues ownSubEnum = new EnumValues(tmp.getIncrement(), new Name(temp.getProject().getLanguage(), name));
 
             temp.getEnumManager().getIDEnum(
                     listEnumView.getSelectionModel().getSelectedItem().getID())
@@ -200,17 +202,15 @@ public class EnumView implements Main.Observabler {
         }
     }
 
-    private void editSubEnum(ListCell<OwnSubEnum> cell) {
-        OwnSubEnum item = cell.getItem();
+    private void editSubEnum(ListCell<EnumValues> cell) {
+        EnumValues item = cell.getItem();
         item.setName(AlertManager.getName("Nový název: ", item.getName()));
         cell.textProperty().bind(Bindings.format("%s", cell.itemProperty()));
     }
 
-    private void deleteSubEnum(OwnSubEnum item) {
+    private void deleteSubEnum(EnumValues item) {
         if (AlertManager.confirm("Opravdu chcete smazat tento item? " + item.toString())) {
-            ProjectManager.getINSTANCE().getEnumManager().getIDEnum(
-            listEnumView.getSelectionModel().getSelectedItem().getID()).removeSubEnum(item);
-            listSubEnumView.getItems().remove(item);
+            ((EnumSection) item.getParent()).getEnumValueList().remove(item);
         }
     }
 
@@ -230,9 +230,9 @@ public class EnumView implements Main.Observabler {
     //-------------------------------------------------------------------------------------------------
     @Override
     public void notificate() {
-        if (ProjectManager.getINSTANCE() != null) {
+        if (Project.getInstance() != null) {
             listEnumView.getItems().clear();
-            listEnumView.getItems().addAll(ProjectManager.getINSTANCE().getEnumManager().getAllEnums());
+            listEnumView.getItems().addAll(Project.getInstance().getEManager().getEnumList());
         }
     }
 

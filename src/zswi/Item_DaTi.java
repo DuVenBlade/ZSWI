@@ -1,26 +1,40 @@
 package zswi;
 
+import java.math.BigInteger;
+import java.sql.Date;
+import java.sql.Time;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import zswi.ItemManager.DataType;
 
 /**
  * Item for date and time
  *
  * @author DDvory
  */
-public class Item_DaTi implements IValuable{
-    private Item item;
-    private Object value;
-    private DateTimeFormatter format;
+public class Item_DaTi extends Item {
 
-    public Item_DaTi(Object value) {
-        this(value,value instanceof LocalDate?DateTimeFormatter.BASIC_ISO_DATE:DateTimeFormatter.ISO_LOCAL_TIME );
-        
+    private Object value;
+    private Format format;
+
+
+    public Item_DaTi(Format format, BigInteger adress,AFlowable parent, ItemManager.DataType type, boolean showUnit) {
+        super(adress,parent, type, showUnit);
+        init(format, this.getType()==DataType.DATE?LocalDate.now():LocalTime.now());
     }
-    public Item_DaTi(Object value, DateTimeFormatter format) {
+
+
+    public Item_DaTi(Object value, Format format, BigInteger adress,AFlowable parent, ItemManager.DataType type, boolean showUnit) {
+        super(adress,parent, type, showUnit);
+        init(format, value);
+    }
+    public  void init(Format format, Object value){
         this.value = value;
         this.format = format;
+        createView();
     }
 
     public Object getValue() {
@@ -29,50 +43,102 @@ public class Item_DaTi implements IValuable{
 
     public void setValue(Object value) {
         this.value = value;
+        this.getvItem().notificate();
     }
 
-    public DateTimeFormatter getFormat() {
+    public SimpleDateFormat getFormat() {
         return format;
     }
 
-    public void setFormat(DateTimeFormatter format) {
+    public void setFormat(Format format) {
         this.format = format;
     }
 
-    @Override
-    public String toString() {
-        String str = "";
-        if (value == null); else if (value instanceof LocalDate) {
-            str = ((LocalDate) value).format(format);
-        } else if (value instanceof LocalTime) {
-            ((LocalTime) value).format(format);
-        }
-        return str;
-    }
-
-    public DateTimeFormatter[] getFormatters() {
-        DateTimeFormatter[] array=null;
-        if (value instanceof LocalDate) {
-            array = new DateTimeFormatter[]{
-                DateTimeFormatter.BASIC_ISO_DATE,
-                DateTimeFormatter.ISO_DATE,
-                DateTimeFormatter.ISO_LOCAL_DATE,
-                DateTimeFormatter.ISO_OFFSET_DATE,
-                DateTimeFormatter.ISO_ORDINAL_DATE,
+    public static Format[] getFormatters(DataType type) {
+        Format[] array = null;
+        if (type== DataType.DATE) {
+            array = new Format[]{
+                new Format("ddMMyyyy"),
+                new Format("dd-MM-yyyy"),
+                new Format("dd.MM.yyyy"),
+                new Format("MM-dd-yyyy"),
             };
-        } else if (value instanceof LocalTime) {
-            array = new DateTimeFormatter[]{
-                DateTimeFormatter.ISO_LOCAL_TIME,
-                DateTimeFormatter.ISO_OFFSET_TIME,
-                DateTimeFormatter.ISO_TIME
+        } else if (type== DataType.TIME) {
+            array = new Format[]{
+                new Format("HHmmSS"),
+                new Format("hh:mm:SS a"),
+                new Format("HH:mm:SS"),
             };
         }
         return array;
     }
 
     @Override
-    public void setItem(Item item) {
-        this.item = item;
+    protected void createView() {
+        switch (this.getType()) {
+            case DATE:
+                vItem = ViewItem.createDatePickerView(this);
+                break;
+            case TIME:
+                vItem = ViewItem.createTimePickerView(this);
+                break;
+        }
+        super.createView();
     }
 
+    @Override
+    public String getStringValue() {
+        String str = "null";
+        if (value == null); else if (value instanceof LocalDate) {
+            str = format.format(Date.valueOf((LocalDate) value));
+        } else if (value instanceof LocalTime) {
+            str = format.format(Time.valueOf((LocalTime) value));
+        }
+        return str;
+    }
+
+    @Override
+    public Element createElementToSave(Document document) {
+        Element element = super.createElementToSave(document);
+        element.setAttribute(Constants.format, format.toPattern());
+        switch (this.getType()) {
+            case DATE:
+                element.setAttribute(Constants.value, new SimpleDateFormat("ddMMyyyy").format(Date.valueOf((LocalDate) value)));
+                break;
+            case TIME:
+                element.setAttribute(Constants.value, new SimpleDateFormat("HHmmSS").format(Time.valueOf((LocalTime) value)));
+                break;
+        }
+        return element;
+    }
+    public static class Format extends SimpleDateFormat{
+
+        public Format(String pattern) {
+            super(pattern);
+        }
+        public static LocalTime getLocalTime(String args) {
+            String h = args.substring(0,2);
+            String m = args.substring(2,4);
+            String s = args.substring(4);
+            return LocalTime.of(Integer.decode(h), Integer.decode(m), Integer.decode(s));
+        }
+        //
+        public static LocalDate getLocalDate(String args) {
+            String d = args.substring(0,2);
+            String m = args.substring(2,4);
+            String y = args.substring(4);
+            return LocalDate.of(Integer.decode(y), Integer.decode(m), Integer.decode(d));
+        }
+        @Override
+        public String toString() {
+            LocalDate date = LocalDate.now();
+            LocalTime time = LocalTime.now();
+            String str = "";
+            str+=this.format(Date.valueOf(date));
+            str+=" ";
+            str+=this.format(Time.valueOf(time));
+            return str;
+        }
+        
+    }
 }

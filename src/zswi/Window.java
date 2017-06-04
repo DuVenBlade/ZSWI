@@ -2,28 +2,34 @@ package zswi;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 public class Window extends AFlowable implements IUpdatable {
 
     private ViewWindow vWindow;
-    private Window parrent;
+    private Window parent;
     private List<Window> listWindows;
     private Panel panel;
 
-    public Window(String name, Window parrent, List<Window> windows, Panel panel) {
-        init(name, parrent, windows, panel);
+    public Window(AFlowable parent) {
+        super(parent);
+        init();
+    }
+    
+    public Window(String name, AFlowable parent) {
+        super(name,parent);
+        init();
     }
 
-    private void init(String name, Window parrent, List<Window> windows, Panel panel) {
-        this.listWindows = windows == null ? new ArrayList<>() : windows;
+    private void init() {
+        this.listWindows = new ArrayList<>();
         vWindow = new ViewWindow(this);
-        this.panel = panel;
-        this.parrent = parrent;
-        setName(name);
+        this.panel = null;
     }
 
     public void setPanel() {
-        setPanel(new Panel(null));
+        setPanel(new Panel(this));
     }
 
     public void setPanel(Panel panel) {
@@ -41,8 +47,7 @@ public class Window extends AFlowable implements IUpdatable {
         String s = AlertManager.getName("Vytvořit Větev: ", "");
         if (s == null) {
             return;
-        }
-        addWindow(new Window(s, this, null, null));
+        }addWindow(new Window(s, this));
     }
 
     private void addWindow(Window wind) {
@@ -62,11 +67,11 @@ public class Window extends AFlowable implements IUpdatable {
     }
 
     public void removeWindow() {
-        if (parrent == null) {
+        if (parent == null) {
             AlertManager.info("Tato položka nemůže být odstraněna");
             return;
         }
-        parrent.getListWindows().remove(this);
+        parent.getListWindows().remove(this);
         vWindow.removeWindow();
         vWindow.notificate();
     }
@@ -114,4 +119,22 @@ public class Window extends AFlowable implements IUpdatable {
             panel.updateAll();
         }
     }
+
+    @Override
+    public Element createElementToSave(Document document) {
+        Element element = super.createElementToSave(document);
+        if(panel!=null)
+        element.appendChild(panel.createElementToSave(document));
+        for (Window listWindow : listWindows) {
+            element.appendChild(listWindow.createElementToSave(document));
+        }
+        return element;
+    }
+
+    void setListWindow(List<Window> list) {
+        this.listWindows = list;
+        vWindow.setListWindows(list);
+        this.vWindow.notificate();
+    }
+    
 }

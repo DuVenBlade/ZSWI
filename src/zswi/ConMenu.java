@@ -36,8 +36,10 @@ public class ConMenu {
         enumItem.setSelected(true);
         //------------------------------------------------------------
         newItem.setOnAction(event -> ProjectManager.createProject());
+        openItem.setOnAction(e->ProjectManager.loadProject());
+        saveItem.setOnAction(e->ProjectManager.saveProejct());
         enumItem.setOnAction(event -> {
-            if(ProjectManager.getINSTANCE()!=null)
+            if(Project.getInstance()!=null)
             changeEnumButton(enumItem);
             else enumItem.setSelected(true);
                 });
@@ -52,10 +54,10 @@ public class ConMenu {
 		if(enumItem.isSelected()) {
 			enumItem.setText("Nastavit Enu_my");
 			Main.getINSTANCE().getRoot().setCenter(
-					(Node)ProjectManager.getINSTANCE().getProject().getvProject().getView());
+					(Node)Project.getInstance().getvProject().getView());
 		} else {
 			enumItem.setText("Nastavit _Projekt");
-			EnumView temp = ProjectManager.getINSTANCE().getEnumManager().getvEnum();
+			EnumView temp =Project.getInstance().getEManager().getvEnum();
 			Main.getINSTANCE().getRoot().setCenter(
 					(Node) temp.getView());
 			temp.notificate();

@@ -91,7 +91,7 @@ public class ViewTable implements Main.Observabler{
         VBox data = new VBox();
         VBox unit = new VBox();
         for (Item item : table.getListItems()) {
-            if(item.isShowUnit())show3th = true;
+            if(item.haveUnit())show3th = true;
             ViewItem vItem = item.getvItem().getView();
             name.getChildren().add(vItem.getName());
             data.getChildren().add(vItem.getData());

@@ -161,16 +161,15 @@ public class ViewProject implements Observabler {
         box.setStyle(Constants.borderStyle5);
         Label size = new Label("Velikost písma: ");
         TextField eSize = new TextField();
-        eSize.setText(FontSize.getSize()+"");
+        FontSize sizeS = ProjectManager.getFont();
+        eSize.setText(sizeS+"");
         eSize.setPrefWidth(50);
         eSize.setOnKeyReleased(e -> {
             if (e.getCode() == KeyCode.ENTER) {
                 try {
                     Integer decode = Integer.decode(eSize.getText());
-                    decode = decode >50?50:decode<10?10:decode;
-                    FontSize.getINSTANCE().setSize(decode);
+                    sizeS.setSize(decode);
                 } catch (Exception ex) {
-                     FontSize.getINSTANCE().setSize(12);
                 }
             }
 

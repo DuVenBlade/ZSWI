@@ -1,22 +1,15 @@
 package zswi.FontSizeObervers;
 
-import zswi.Main;
 import java.time.LocalTime;
 import java.util.Observable;
 import java.util.Observer;
-import javafx.beans.InvalidationListener;
 import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.KeyCode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.text.Font;
 import zswi.AlertManager;
-import zswi.ProjectManager;
 import zswi.res.ResManager;
 
 /**

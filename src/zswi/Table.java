@@ -3,6 +3,8 @@ package zswi;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 /**
  *
@@ -12,16 +14,17 @@ public class Table extends AFlowable implements IUpdatable {
     private ViewTable vTable;
     private List<Item> listItems;
 
-    public Table(String name, List<Item> listRow) {
-        init(name, listRow);
+    public Table(String name, AFlowable parent) {
+        super(name, parent);
+        init();
     }
-    private void init(String name, List<Item> listRow){
-        this.listItems = listRow==null?new ArrayList<>():listRow;
+    
+    private void init(){
+        this.listItems = new ArrayList<>();
         vTable = new ViewTable(this);
-        setName(name);
     }
     public void createItem(){
-        addItem(AlertManager.Item(null));
+        addItem(AlertManager.Item(this));
     }
     public void addItem(Item item){
         if(item!=null)listItems.add(item);
@@ -69,4 +72,18 @@ public class Table extends AFlowable implements IUpdatable {
          listItem.updateAll();
         }
     }
+
+    @Override
+    public Element createElementToSave(Document document) {
+        Element element = super.createElementToSave(document);
+        for (Item listItem : listItems) {
+            element.appendChild(listItem.createElementToSave(document));
+        }
+        return element;
+    }
+
+    public void setListItems(List<Item> listItems) {
+        this.listItems = listItems;
+    }
+    
 }
