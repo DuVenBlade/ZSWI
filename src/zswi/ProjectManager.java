@@ -30,7 +30,8 @@ public class ProjectManager {
     
 
     private static FontSize font;
-    private File fileName;
+    private static File fileName;
+    private static boolean isEdited = false;
     
     private static LanguageManager languageManager;
     static{
@@ -43,28 +44,51 @@ public class ProjectManager {
 
     public static void createProject() {
         if (checkProject()) {
-            Project project = AlertManager.Project();
+            isEdited=true;
+            font = new FontSize(12);
+            AlertManager.Project();
         }
     }
 
     public static void closeProject() {
         if (Project.getInstance() != null){
-            if(AlertManager.confirm("Chete projekt před uzavřením uložit?")){
+            if(isEdited&&AlertManager.confirm("Chete projekt před uzavřením uložit?")){
                 saveProejct();
             }
-        }
+            Project.close();
+            ProjectManager.font=null;
+        }fileName = null;
     }
     public static void saveProejct(){
         if (Project.getInstance() != null){
-            mod_FileManager.save(Project.getInstance());
+            if(fileName==null){
+                saveAs();
+            }else{
+                mod_FileManager.save(Project.getInstance(),fileName);
+            }
+            isEdited = false;
         }
+    }
+    public static void saveAs(){
+        File directory = mod_FileManager.getDirectory();
+        if(directory==null)return;
+        mod_FileManager.save(Project.getInstance(),directory);
+        isEdited = false;
     }
 
     public static void loadProject() {
         if (checkProject()) {
             closeProject();
-            mod_XmlManager.ReadXML("C:\\Users\\DDvory\\Desktop\\test.xml");
         }
+        font = new FontSize(12);
+        loadProject(mod_FileManager.getFile());
+    }
+    
+    private static void loadProject(File file){
+        if(file==null)return;
+        fileName=file.getParentFile();
+        Project ReadXML = mod_XmlManager.ReadXML(file);
+        ReadXML.updateAll();
     }
     
     private static boolean checkProject() {
@@ -85,8 +109,12 @@ public class ProjectManager {
     public static FontSize getFont() {
         return font;
     }
-    public static void createFontSize(){
-        font = new FontSize(12);
+
+    public static void setEdited(){
+        isEdited = true;
+    }
+    public static boolean isEdited(){
+        return isEdited;
     }
 
     public static void changeLanguage(int id) {

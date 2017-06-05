@@ -25,4 +25,12 @@ public class Increment {
     public void resetIncrement(){
         increment = 0;
     }
+    public String toStringIncrement(){
+        return ++increment+"";
+    }
+    @Override
+    public String toString() {
+        return increment+"";
+    }
+    
 }

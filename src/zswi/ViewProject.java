@@ -240,6 +240,10 @@ public class ViewProject implements Observabler {
     public Object getView() {
         return viewPane;
     }
+
+    void close() {
+       Main.getINSTANCE().getRoot().setCenter(null);
+    }
     public class ErrorLabel extends HBox{
         ImageView view;
         Label errorMessage;

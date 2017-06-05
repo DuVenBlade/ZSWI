@@ -1,7 +1,7 @@
 package zswi;
 
 import zswi.EnumManager.EnumSection;
-import zswi.EnumManager.EnumValues;
+import zswi.EnumManager.EnumValue;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -22,7 +22,9 @@ public class EnumView implements Main.Observabler {
     private EnumManager eManager;
     private BorderPane viewPane;
     private ListView<EnumSection> listEnumView;
-    private ListView<EnumValues> listSubEnumView;
+    private ListView<EnumValue> listSubEnumView;
+    TextField textFieldEnumSection;
+    TextField textFieldEnumValue;
 
     public EnumView(EnumManager eManager) {
         viewPane = new BorderPane();
@@ -31,6 +33,8 @@ public class EnumView implements Main.Observabler {
     }
 
     private void init() {
+        textFieldEnumValue = new TextField();
+        textFieldEnumSection = new TextField();
         SplitPane spl = new SplitPane();
         spl.getItems().addAll(createEnumPane(), createSubEnumPane());
         viewPane.setCenter(spl);
@@ -88,9 +92,9 @@ public class EnumView implements Main.Observabler {
     private ContextMenu createEnumContextMenu(ListCell<EnumSection> cell) {
         ContextMenu contextMenu = new ContextMenu();
 
-        MenuItem addItem = new MenuItem("Přidat SubEnum");
-        //addItem.setOnAction(event -> addSubEnum(AlertManager.getName("Název: ", ""),listEnumView.getSelectionModel().getSelectedItem()));
-        MenuItem editItem = new MenuItem("Upravit");
+        MenuItem addItem = new MenuItem("Přidat hodnotu");
+        addItem.setOnAction(event -> addEnumValue(AlertManager.getName("Název: ", "")));
+        MenuItem editItem = new MenuItem("Přejmenovat");
         editItem.setOnAction(event -> editEnum(cell));
         MenuItem deleteItem = new MenuItem("Smazat");
         deleteItem.setOnAction(event -> deleteEnum(cell.getItem()));
@@ -100,29 +104,26 @@ public class EnumView implements Main.Observabler {
     }
 
     private void addEnumValue(String name) {
-        if(name.isEmpty()){
+        if (name.isEmpty()) {
             AlertManager.info("Název je pžíliš krátký");
             return;
         }
         EnumSection selectedItem = listEnumView.getSelectionModel().getSelectedItem();
-        if(selectedItem==null){
+        if (selectedItem == null) {
             AlertManager.info("Nebyla vybrána sekce výčtového typu");
             return;
         }
-        EnumSection ownEnum = new EnumSection(eManager.getIncrement().increment(), name);
-        selectedItem.addEnumValue(ownEnum);
-        listEnumView.getItems().add(ownEnum);
+        eManager.addEnumValue(selectedItem, name);
     }
-    private void addEnumSection(String name){
-        EnumSection tmp = listEnumView.getSelectionModel().getSelectedItem();
-        if (tmp == null) {
-            AlertManager.info("Nebyl vybrán žádný Výčtový typ.");
-        } else if (name.isEmpty()) {
+
+    private void addEnumSection(String name) {
+        if (name.isEmpty()) {
             AlertManager.info("Název výčtového typu je příliš krátký.");
         } else {
-           //eManager.addEnumSection(new EnumSection());
+            eManager.addEnumSection(name);
         }
     }
+
     private void editEnum(ListCell<EnumSection> cell) {
         EnumSection item = cell.getItem();
         item.setName(AlertManager.getName("Nový název: ", item.getName()));
@@ -138,12 +139,11 @@ public class EnumView implements Main.Observabler {
 
     private Node createEnumBot() {
         HBox hBox = new HBox();
-        TextField textField = new TextField();
         //textField
-        Button button = new Button("Přidat Enum");
-        //button.setOnAction(event -> addEnum(textField.getText()));
+        Button button = new Button("Přidat Výčtový typ");
+        button.setOnAction(event -> addEnumSection(textFieldEnumSection.getText()));
 
-        hBox.getChildren().addAll(textField);
+        hBox.getChildren().addAll(textFieldEnumSection);
         hBox.getChildren().addAll(button);
 
         hBox.setStyle(Constants.borderStyle7);
@@ -162,7 +162,7 @@ public class EnumView implements Main.Observabler {
         listSubEnumView = new ListView<>();
 
         listSubEnumView.setCellFactory(lv -> {
-            ListCell<EnumValues> cell = new ListCell<EnumValues>();
+            ListCell<EnumValue> cell = new ListCell<EnumValue>();
             ContextMenu contextMenu = createSubEnumContextMenu(cell);
 
             cell.emptyProperty().addListener((obs, wasEmpty, isNowEmpty) -> {
@@ -182,7 +182,7 @@ public class EnumView implements Main.Observabler {
         return listSubEnumView;
     }
 
-    private ContextMenu createSubEnumContextMenu(ListCell<EnumValues> cell) {
+    private ContextMenu createSubEnumContextMenu(ListCell<EnumValue> cell) {
         ContextMenu contextMenu = new ContextMenu();
 
         MenuItem editItem = new MenuItem("Upravit");
@@ -194,25 +194,27 @@ public class EnumView implements Main.Observabler {
         return contextMenu;
     }
 
-    private void editSubEnum(ListCell<EnumValues> cell) {
-        EnumValues item = cell.getItem();
-        item.setName(AlertManager.getName("Nový název: ", item.getName()));
-        cell.textProperty().bind(Bindings.format("%s", cell.itemProperty()));
+    private void editSubEnum(ListCell<EnumValue> cell) {
+        EnumValue item = cell.getItem();
+        String name = AlertManager.getName("Nový název: ", item.getName());
+        if (name != null) {
+            item.setName(name);
+            cell.textProperty().bind(Bindings.format("%s", cell.itemProperty()));
+        }
     }
 
-    private void deleteSubEnum(EnumValues item) {
+    private void deleteSubEnum(EnumValue item) {
         if (AlertManager.confirm("Opravdu chcete smazat tento item? " + item.toString())) {
-            ((EnumSection) item.getParent()).getEnumValueList().remove(item);
+            eManager.removeEnumValue(item);
         }
     }
 
     private Node createSubEnumBot() {
         HBox hBox = new HBox();
-        TextField textField = new TextField();
-        Button button = new Button("Přidat SubEnum");
-        //button.setOnAction(event -> addSubEnum(textField.getText()));
+        Button button = new Button("Přidat Hodnotu výčtového typu");
+        button.setOnAction(event -> addEnumValue(textFieldEnumValue.getText()));
 
-        hBox.getChildren().addAll(textField);
+        hBox.getChildren().addAll(textFieldEnumValue);
         hBox.getChildren().addAll(button);
 
         hBox.setStyle(Constants.borderStyle7);
@@ -222,9 +224,13 @@ public class EnumView implements Main.Observabler {
     //-------------------------------------------------------------------------------------------------
     @Override
     public void notificate() {
-        if (Project.getInstance() != null) {
-            listEnumView.getItems().clear();
-            listEnumView.getItems().addAll(Project.getInstance().getEManager().getEnumList());
+        EnumSection selectedItem = listEnumView.getSelectionModel().getSelectedItem();
+        listEnumView.getItems().clear();
+        listEnumView.getItems().addAll(eManager.getEnumList());
+        textFieldEnumValue.setText("");
+        textFieldEnumSection.setText("");
+        if (selectedItem != null) {
+            changeSubEnumList(selectedItem);
         }
     }
 

@@ -7,7 +7,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
-import zswi.EnumManager.EnumValues;
+import zswi.EnumManager.EnumValue;
 import zswi.Item_Int.Format;
 
 /**
@@ -142,7 +142,7 @@ public class ItemManager {
 
     private void setENUM(Object obj, Item item) {
         Item_Enum value = (Item_Enum)item;
-        EnumValues o = (EnumValues)obj;
+        EnumValue o = (EnumValue)obj;
         value.setValue(o.getID());
     }
      private void setBOOLEAN(Object obj, Item item) {

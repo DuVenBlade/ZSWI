@@ -10,7 +10,7 @@ public class Window extends AFlowable implements IUpdatable {
     private ViewWindow vWindow;
     private Window parent;
     private List<Window> listWindows;
-    private Panel panel;
+    protected Panel panel;
 
     public Window(AFlowable parent) {
         super(parent);
