@@ -14,6 +14,9 @@ public class Constants {
     public static final String Panel = "Panel";
     public static final String Language = "Language";
     public static final String Name = "Name";
+    public static final String EnumSection = "EnumSection";
+    public static final String EnumValue = "EnumValue";
+    public static final String EnumManager = "EnumManager";
     ///////////////////////////////////////////////
     public static final String font ="font";
     public static final String haveUnit ="haveUnit";

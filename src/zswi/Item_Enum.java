@@ -35,14 +35,13 @@ public class Item_Enum extends Item{
 
     @Override
     public String getStringValue() {
-        if(value==null)return "";
+        if(value==null)return "null";
          return Project.getInstance().getEManager().getName(value);
     }
 
     @Override
     public Element createElementToSave(Document document) {
         Element element = super.createElementToSave(document);
-        element.setAttribute(Constants.id, value+"");
         element.setAttribute(Constants.value, value+"");
         return element;
     }

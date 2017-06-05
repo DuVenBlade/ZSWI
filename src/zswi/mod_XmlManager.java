@@ -1,15 +1,18 @@
 package zswi;
 
 
-import com.sun.org.apache.xerces.internal.dom.DeferredTextImpl;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
-import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.xml.sax.SAXException;
+import zswi.EnumManager.EnumSection;
+import zswi.EnumManager.EnumValue;
 import zswi.ItemManager.DataType;
 import zswi.LanguageManager.Language;
 
@@ -19,12 +22,12 @@ import zswi.LanguageManager.Language;
  */
 public class mod_XmlManager {
     
-    public static Project ReadXML(String fileName){
+    public static Project ReadXML(File fileName){
         Project prj = null;
         try {
-            Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new File(fileName));
+            Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(fileName);
             prj = getProject((Node)doc.getChildNodes().item(0));
-        } catch (Exception ex) {
+        } catch (ParserConfigurationException | SAXException | IOException ex) {
             ex.printStackTrace();
         }
         return prj;
@@ -34,9 +37,10 @@ public class mod_XmlManager {
         Integer decode = Integer.decode(getATR(node, Constants.language));
         String name = getATR(node, Constants.name);
         List<Node> childsByName = getChildsByName(node, Constants.Language);
+        Node get = getChildsByName(node, Constants.EnumManager).get(0);
         List<Language> list = getLanguages(childsByName);
-        int font = Integer.decode(getATR(node, Constants.font));
-        Project prj = Project.createProject(decode, name, list, null);
+        Project prj = Project.createProject(decode, name, list);
+        prj.seteManager(getEnumManager(get));
         Project proeject =(Project) getWindow((Window)prj,node,null);
         return proeject;
     }
@@ -124,7 +128,6 @@ public class mod_XmlManager {
                 break;
             
         }
-        if(item==null)System.out.println(dataType);
         if(item!=null)
         item.setListNames(getNames(getChildsByName(node, Constants.Name)));
         return item;
@@ -139,7 +142,30 @@ public class mod_XmlManager {
         }
         return list;
     }
-    
+    private static  EnumManager getEnumManager(Node node){
+        EnumManager eManager = new EnumManager();
+        List<Node> childsByName = getChildsByName(node, Constants.EnumSection);
+        for (Node node1 : childsByName) {
+            eManager.addEnumSection(getEnumSection(eManager,node1));
+        }
+        return eManager;
+    }
+    private static EnumSection getEnumSection(EnumManager manager,Node node){
+        String atr = getATR(node, Constants.id);
+        EnumSection section = new EnumSection(manager,atr);
+        section.setListNames(getNames(getChildsByName(node, Constants.Name)));
+        List<Node> childsByName = getChildsByName(node, Constants.EnumValue);
+        for (Node node1 : childsByName) {
+            section.addEnumValue(getEnumValue(node1,section));
+        }
+        return section;
+    }
+    private static EnumValue getEnumValue(Node node, AFlowable parent){
+        String atr = getATR(node, Constants.id);
+        EnumValue enumValue = new EnumValue(atr, parent);
+        enumValue.setListNames(getNames(getChildsByName(node, Constants.Name)));
+        return enumValue;
+    }
     private static String getATR(Node el,String name){
         return el.getAttributes().getNamedItem(name).getNodeValue();
     }

@@ -17,7 +17,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import zswi.EnumManager.EnumSection;
-import zswi.EnumManager.EnumValues;
+import zswi.EnumManager.EnumValue;
 import zswi.ItemManager.DataType;
 import zswi.ViewItemEditManager.*;
 
@@ -87,7 +87,7 @@ public class AlertManager {
             }
         }
         
-        return Project.createProject(box.getValue().getId(), nameData, null, null);
+        return Project.createProject(box.getValue().getId(), nameData, null);
     }
 
     public static String getName(String text, String def) {

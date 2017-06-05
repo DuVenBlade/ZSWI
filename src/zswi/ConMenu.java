@@ -29,6 +29,7 @@ public class ConMenu {
         Menu fileMenu = new Menu("_Soubor");
         fileMenu.setGraphic(imageView);
         MenuItem newItem = new MenuItem("_Nový");
+        MenuItem close = new MenuItem("_Zavřít");
         MenuItem openItem = new MenuItem("_Otevřít");
         MenuItem saveItem = new MenuItem("_Uložit");
         MenuItem saveAsItem = new MenuItem("Uložit _Jako");
@@ -38,6 +39,8 @@ public class ConMenu {
         newItem.setOnAction(event -> ProjectManager.createProject());
         openItem.setOnAction(e->ProjectManager.loadProject());
         saveItem.setOnAction(e->ProjectManager.saveProejct());
+        saveAsItem.setOnAction(e->ProjectManager.saveAs());
+        close.setOnAction(e->ProjectManager.closeProject());
         enumItem.setOnAction(event -> {
             if(Project.getInstance()!=null)
             changeEnumButton(enumItem);
@@ -45,7 +48,7 @@ public class ConMenu {
                 });
         //-----------------------------------------------------------
         fileMenu.getItems().addAll(
-                newItem, openItem, new SeparatorMenuItem(),
+                newItem, openItem,close, new SeparatorMenuItem(),
                 saveItem, saveAsItem, new SeparatorMenuItem(),
                 enumItem);
         return fileMenu;
